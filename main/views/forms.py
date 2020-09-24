@@ -10,7 +10,6 @@ from main.models import User
 
 class SignupForm(FlaskForm):
     """Sign up for a user account."""
-    """username = StringField('Username', [DataRequired()])"""
 
     email = StringField('Email', [
         Email(message='Not a valid email address.'),
@@ -24,11 +23,6 @@ class SignupForm(FlaskForm):
 
     recaptcha = RecaptchaField()
     submit = SubmitField('Sign Up')
-
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None:
-            raise ValidationError('Please use a different username.')
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()

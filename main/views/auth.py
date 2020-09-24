@@ -1,16 +1,13 @@
-from flask import Blueprint, redirect, render_template, flash, request, session, url_for, g
+from flask import Blueprint, redirect, render_template, flash, request, session, url_for
 from main.models import User
 from main.views.forms import SignupForm, LoginForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_required, logout_user, current_user, login_user
-from main.views import db
+from main.views import db, login_manager
 
 
 # Blueprint Configuration
-auth_bp = Blueprint(
-    'auth_bp', __name__,
-)
-login_manager = g.login_manager
+auth_bp = Blueprint('auth_bp', __name__)
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -31,7 +28,11 @@ def signup():
             db.session.add(user)
             db.session.commit()  # Create new user
             login_user(user)  # Log in as newly created user
-            return redirect(url_for('main_bp.dashboard'))
+
+            if user.access == 1:
+                return redirect(url_for('placeholder'))
+            else:
+                return redirect(url_for('admin_dashboard_placeholder'))
         flash('A user already exists with that email address.')
     return render_template(
         'signup.jinja2',
@@ -80,9 +81,9 @@ def load_user(user_id):
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    """Redirect unauthorized users to Login page."""
-    flash('You must be logged in to view that page.')
-    return redirect(url_for('auth_bp.login'))
+    """Redirect unauthorized users to homepage."""
+    flash('Only admin users are authorized to view this page.')
+    return redirect(url_for('public_bp.homepage'))
 
 @auth_bp.route("/logout")
 @login_required

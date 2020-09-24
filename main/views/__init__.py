@@ -8,6 +8,7 @@ from flask_login import LoginManager
 csrf = CSRFProtect()
 db = SQLAlchemy()
 migrate = Migrate()
+login_manager = LoginManager()
 
 def create_app():
     app = Flask(__name__)
@@ -16,8 +17,7 @@ def create_app():
     csrf.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
-
-    login_manager = LoginManager(app)
+    login_manager.init_app(app)
 
     from main.views.auth import auth_bp
     app.register_blueprint(auth_bp)
