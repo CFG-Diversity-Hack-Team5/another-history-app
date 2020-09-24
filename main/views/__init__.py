@@ -22,4 +22,7 @@ def create_app():
     from main.views.auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    from main.views.public import public_bp
+    app.register_blueprint(public_bp)
+
     return app

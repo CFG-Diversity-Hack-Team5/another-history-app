@@ -9,8 +9,6 @@ from main.views import db
 # Blueprint Configuration
 auth_bp = Blueprint(
     'auth_bp', __name__,
-    template_folder='templates',
-    static_folder='static'
 )
 login_manager = g.login_manager
 
