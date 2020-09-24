@@ -19,4 +19,7 @@ def create_app():
 
     login_manager = LoginManager(app)
 
+    from main.views.auth import auth_bp
+    app.register_blueprint(auth_bp)
+
     return app
