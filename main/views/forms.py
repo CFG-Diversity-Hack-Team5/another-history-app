@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import (StringField,
+                     BooleanField,
                      SubmitField,
                      PasswordField)
 from wtforms.validators import (DataRequired,
@@ -39,5 +40,24 @@ class LoginForm(FlaskForm):
         ]
     )
     password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
     submit = SubmitField('Log In')
 
+class RequestResetForm(FlaskForm):
+    '''User Request New Password Form'''
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('There is no account with that email. You must register first.')
+
+
+class ResetPasswordForm(FlaskForm):
+    '''User Reset Password Form'''
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')

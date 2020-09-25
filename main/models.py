@@ -1,8 +1,9 @@
 import os
-from main.views import db
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from main.views import db, create_app
 
 ACCESS = {
     'user': 1,
@@ -26,6 +27,20 @@ class User(db.Model, UserMixin):
         'CourseLike',
         foreign_keys='CourseLike.user_id',
         backref='user', lazy='dynamic')
+
+
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(create_app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(create_app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
 
     def __init__(self, email, password_hash):
         self.email = email
@@ -101,5 +116,3 @@ class CourseLike(db.Model):
     def __init__(self, user_id, course_id):
         self.user_id = user_id
         self.course_id = course_id
-
-
