@@ -22,7 +22,10 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128), nullable=False)
     access = db.Column(db.Integer, nullable=False)
     courses = relationship("Course", back_populates="user")
-    rated = relationship("CourseRating", foreign_keys='CourseRating.user_id', backref='user', lazy='dynamic')
+    liked = db.relationship(
+        'CourseLike',
+        foreign_keys='CourseLike.user_id',
+        backref='user', lazy='dynamic')
 
     def __init__(self, email, password_hash):
         self.email = email
@@ -35,6 +38,22 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return '<User {}>'.format(self.email)
+
+    def like_course(self, course):
+        if not self.has_liked_post(course):
+            like = CourseLike(user_id=self.id, course_id=course.id)
+            db.session.add(like)
+
+    def unlike_course(self, course):
+        if self.has_liked_post(course):
+            CourseLike.query.filter_by(
+                user_id=self.id,
+                course_id=course.id).delete()
+
+    def has_liked_course(self, course):
+        return CourseLike.query.filter(
+            CourseLike.user_id == self.id,
+            CourseLike.course_id == course.id).count() > 0
 
 
 class Course(db.Model):
@@ -49,7 +68,7 @@ class Course(db.Model):
     created = db.Column(db.DateTime(timezone=True), server_default=func.now(), nullable=False)
     books = relationship("Book", secondary=association_table, back_populates="courses")
     is_approved = db.Column(db.Boolean, default=False, unique=False)
-    ratings = relationship('CourseRating', backref='course', lazy='dynamic')
+    likes = db.relationship('CourseLike', backref='course', lazy='dynamic')
 
 
     def __init__(self, title, body, author_id, category):
@@ -72,16 +91,14 @@ class Book(db.Model):
         self.image_url = image_url
         self.course_id = course_id
 
-class CourseRating(db.Model):
-    __tablename__ = 'rating'
+class CourseLike(db.Model):
+    __tablename__ = 'course_like'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), nullable=False)
-    rating = db.Column(db.Integer, unique=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id', ondelete='CASCADE'), nullable=False)
 
-    def __init__(self, rating, user_id, course_id):
-        self.rating = rating
+    def __init__(self, user_id, course_id):
         self.user_id = user_id
         self.course_id = course_id
 

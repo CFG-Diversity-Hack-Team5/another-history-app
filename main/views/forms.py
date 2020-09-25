@@ -22,7 +22,7 @@ class SignupForm(FlaskForm):
             ])
 
     recaptcha = RecaptchaField()
-    submit = SubmitField('Sign Up')
+    submit = SubmitField('Register')
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
