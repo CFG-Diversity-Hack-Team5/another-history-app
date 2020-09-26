@@ -1,6 +1,7 @@
-from flask import Blueprint, redirect, render_template
-from main.models import Course, CourseLike
-from sqlalchemy import func
+from flask import Blueprint, redirect, render_template, url_for
+from main.models import Course, CourseLike, Module
+from sqlalchemy import func, and_
+from flask_login import current_user
 
 public_bp = Blueprint('public_bp', __name__)
 
@@ -13,6 +14,9 @@ def homepage():
     featured_category = featured_course.category
     related_courses = Course.query.filter_by(category=featured_category).limit(3).all()
     related_courses = [course.title for course in related_courses]
+
+    if current_user.is_authenticated:
+        return redirect(url_for('user-dashboard'))
 
     return render_template('placeholder.html',
                            popular_courses=popular_courses,
@@ -28,8 +32,21 @@ def browse_courses():
 @public_bp.route('/course/<int:course_id>', methods=['GET','POST'])
 def show_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
-    return render_template("placeholder.html", course=course)
-
+    week_one = Module.query.join(Course, Module.course_id == Course.id).filter(
+        and_(course_id == course_id, Module.order == 1)).first()
+    week_two = Module.query.join(Course, Module.course_id == Course.id).filter(
+        and_(course_id == course_id, Module.order == 2)).first()
+    week_three = Module.query.join(Course, Module.course_id == Course.id).filter(
+        and_(course_id == course_id, Module.order == 3)).first()
+    week_four = Module.query.join(Course, Module.course_id == Course.id).filter(
+        and_(course_id == course_id, Module.order == 4)).first()
+    books = course.books
+    return render_template("placeholder.html", course=course,
+                           week_one=week_one,
+                           week_two=week_two,
+                           week_three=week_three,
+                           week_four=week_four,
+                           books=books)
 
 @public_bp.route('/about', methods=['GET','POST'])
 def about_us():
