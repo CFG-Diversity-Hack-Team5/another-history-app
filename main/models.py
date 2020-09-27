@@ -4,6 +4,9 @@ from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from main.views import db
+import flask_whooshalchemy
+from whoosh.analysis import StemmingAnalyzer, DoubleMetaphoneFilter
+
 
 ACCESS = {
     'user': 1,
@@ -72,6 +75,8 @@ class User(db.Model, UserMixin):
 
 class Course(db.Model):
     __tablename__ = 'course'
+    __searchable__ = ['title', 'summary']  # indexed fields
+    __analyzer__ = StemmingAnalyzer() | DoubleMetaphoneFilter()
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user = relationship("User", back_populates="courses")

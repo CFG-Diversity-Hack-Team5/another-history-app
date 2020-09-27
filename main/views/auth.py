@@ -56,7 +56,8 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect(url_for('main_bp.dashboard'))
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('main_bp.dashboard'))
         flash('Invalid email/password combination')
         return redirect(url_for('auth_bp.login'))
     return render_template(

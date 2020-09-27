@@ -93,3 +93,8 @@ class ModuleForm(FlaskForm):
 class BookForm(FlaskForm):
     book_title = StringField('Book Title', validators=[DataRequired(message='Please enter a book title.')])
     submit = SubmitField('Submit')
+
+
+class SearchForm(FlaskForm):
+    search = StringField('Search courses', validators=[DataRequired()])
+    submit = SubmitField('Submit')
