@@ -27,15 +27,18 @@ class User(db.Model, UserMixin):
         'CourseLike',
         foreign_keys='CourseLike.user_id',
         backref='user', lazy='dynamic')
-
+    submission = db.relationship(
+        'user_submission',
+        foreign_keys='user_submission.user_id',
+        backref='user', lazy='dynamic')
 
     def get_reset_token(self, expires_sec=1800):
-        s = Serializer(create_app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
+        s = Serializer(os.environ['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.user_id}).decode('utf-8')
 
     @staticmethod
     def verify_reset_token(token):
-        s = Serializer(create_app.config['SECRET_KEY'])
+        s = Serializer(os.environ['SECRET_KEY'])
         try:
             user_id = s.loads(token)['user_id']
         except:
@@ -116,3 +119,21 @@ class CourseLike(db.Model):
     def __init__(self, user_id, course_id):
         self.user_id = user_id
         self.course_id = course_id
+
+class CommunitySubmission(db.Model):
+    __tablename__ = 'community_submission'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), nullable=False)
+    new_course = db.Column(db.String(), nullable=False)
+    select_course = db.Column(db.String(), nullable=False)
+    change_course = db.Column(db.String(), nullable=False)
+
+    def __init__(self, user_id, new_course, select_course, change_course):
+        self.user_id = user_id
+        self.new_course = new_course
+        self.select_course = select_course
+        self.change_course = change_course
+
+
+
