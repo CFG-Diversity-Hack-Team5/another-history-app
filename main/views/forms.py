@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm, RecaptchaField
+from flask_wtf import FlaskForm
 from wtforms import (StringField,
                      BooleanField,
                      SubmitField,
@@ -11,8 +11,8 @@ from wtforms.validators import (DataRequired,
                                 ValidationError)
 from main.models import User, Course
 
+
 class SignupForm(FlaskForm):
-    """Sign up for a user account."""
 
     email = StringField('Email', [
         Email(message='Not a valid email address.'),
@@ -33,8 +33,8 @@ class SignupForm(FlaskForm):
         if user is not None:
             raise ValidationError('Please use a different email address.')
 
+
 class LoginForm(FlaskForm):
-    """User Log-in Form."""
     email = StringField(
         'Email',
         validators=[
@@ -46,8 +46,8 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember Me', default=False)
     submit = SubmitField('Log In')
 
+
 class RequestResetForm(FlaskForm):
-    '''User Request New Password Form'''
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
     submit = SubmitField('Request Password Reset')
@@ -59,14 +59,13 @@ class RequestResetForm(FlaskForm):
 
 
 class ResetPasswordForm(FlaskForm):
-    '''User Reset Password Form'''
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6, message='Select a stronger password.')])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
 
+
 class CommunitySubmissionForm(FlaskForm):
-    '''User Submission Form'''
     new_course = StringField(validators=[DataRequired()])
 
     course_choices = Course.query.all()
@@ -76,3 +75,26 @@ class CommunitySubmissionForm(FlaskForm):
     change_course = StringField(validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+
+class CourseForm(FlaskForm):
+    title = StringField('Course Title', validators=[DataRequired()])
+    choices = ['STEM', 'Arts & Humanities', 'Culture & Society', 'Politics']
+    category = SelectField('Category', choices=choices, validators=[DataRequired()])
+    summary = StringField('Summary', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class ModuleForm(FlaskForm):
+    name = StringField('Module Name', validators=[DataRequired()])
+    content = StringField('Module Content', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class BookForm(FlaskForm):
+    book_title = StringField('Book Title', validators=[DataRequired(message='Please enter a book title.')])
+    submit = SubmitField('Submit')
+
+
+class SearchForm(FlaskForm):
+    search = StringField('Search courses', validators=[DataRequired()])
+    submit = SubmitField('Submit')
