@@ -7,7 +7,18 @@ from main.views.forms import CommunitySubmissionForm
 user_bp = Blueprint('user_bp', __name__)
 
 
-@user_bp.route('user/<int:user_id>/community_submission', methods=['GET','POST'])
+@user_bp.route('user/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def show_user_dashboard(user_id):
+    user = User.query.filter_by(user_id=user_id).one()
+    current_courses = user.enrolled
+    liked_courses = user.liked
+    completed_courses = user.completions
+    return render_template('user_dashboard.html', current_courses=current_courses,
+                           liked_courses=liked_courses, completed_courses=completed_courses)
+
+
+@user_bp.route('user/<int:user_id>/community_submission', methods=['GET', 'POST'])
 @login_required
 def community_submission(user_id):
 
@@ -22,7 +33,7 @@ def community_submission(user_id):
         db.session.add(submission)
         db.session.commit()
         flash('Your submission has been recorded.')
-        return redirect(url_for('user_dashboard'))
+        return redirect(url_for('.show_user_dashboard'))
 
     return render_template('submission.html')
 

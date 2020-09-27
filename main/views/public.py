@@ -18,7 +18,7 @@ def index():
 
     if current_user.is_authenticated:
         if current_user.access == 1:
-            return redirect(url_for('user-dashboard_placeholder'))  # to do
+            return redirect(url_for('user_bp.show_user_dashboard'))  # to do
         else:
             return redirect(url_for('admin_bp.show_admin_dashboard'))
 
@@ -28,13 +28,13 @@ def index():
                            related_courses=related_courses)
 
 
-@public_bp.route('/courses', methods=['GET','POST'])
+@public_bp.route('/courses', methods=['GET', 'POST'])
 def browse_courses():
     courses = Course.query.all()
     return render_template('html', courses=courses)
 
 
-@public_bp.route('/courses/<int:course_id>', methods=['GET','POST'])
+@public_bp.route('/courses/<int:course_id>', methods=['GET', 'POST'])
 def show_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
     modules = Module.query.join(Course, Module.course_id == Course.id).filter(course_id == course_id).all()
@@ -42,6 +42,7 @@ def show_course(course_id):
     return render_template("placeholder.html", course=course,
                            modules=modules,
                            books=books)
+
 
 @public_bp.route('/about', methods=['GET'])
 def about_us():

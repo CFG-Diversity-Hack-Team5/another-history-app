@@ -106,6 +106,7 @@ def delete_course(course_id):
     db.session.commit()
     return redirect(url_for('.show_admin_dashboard'))
 
+
 @admin_bp.route('/community_submissions', methods=['GET', 'POST'])
 @login_required
 def show_community_submissions():
