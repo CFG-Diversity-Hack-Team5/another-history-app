@@ -9,6 +9,7 @@ from main.views import db, login_manager, Mail, Message
 # Blueprint Configuration
 auth_bp = Blueprint('auth_bp', __name__)
 
+
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     """
@@ -30,13 +31,14 @@ def register():
             login_user(user, remember=form.remember_me.data)  # Log in as newly created user
 
             if user.access == 1:
-                return redirect(url_for('placeholder'))
+                return redirect(url_for('user_dashboard_placeholder'))  # to do
             else:
-                return redirect(url_for('admin_dashboard_placeholder'))
+                return redirect(url_for('admin_bp.show_admin_dashboard'))
         flash('A user already exists with that email address.')
     return render_template(
         'signup.jinja2',
     )
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -48,7 +50,7 @@ def login():
     """
     # Bypass if user is logged in
     if current_user.is_authenticated:
-        return redirect(url_for('main_bp.dashboard'))
+        return redirect(url_for('user_dashboard_placeholder'))
 
     form = LoginForm()
     # Validate login attempt
@@ -57,12 +59,13 @@ def login():
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user, remember=form.remember_me.data)
             next_page = request.args.get('next')
-            return redirect(next_page or url_for('main_bp.dashboard'))
+            return redirect(next_page or url_for('user_dashboard_placeholder'))
         flash('Invalid email/password combination')
-        return redirect(url_for('auth_bp.login'))
+        return redirect(url_for('.login'))
     return render_template(
         'login.jinja2',
-    )
+    )  # to do
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -76,14 +79,16 @@ def load_user(user_id):
 def unauthorized():
     """Redirect unauthorized users to homepage."""
     flash('Please login to view this page.')
-    return redirect(url_for('login'))
+    return redirect(url_for('.login'))
+
 
 @auth_bp.route("/logout")
 @login_required
 def logout():
     """User log-out logic."""
     logout_user()
-    return redirect(url_for('auth_bp.login'))
+    return redirect(url_for('.login'))
+
 
 def send_reset_email(user):
     token = user.get_reset_token()
@@ -96,6 +101,7 @@ If you did not make this request then simply ignore this email and no changes wi
 '''
     Mail.send(msg)
 
+
 @auth_bp.route("/reset_password", methods=['GET', 'POST'])
 def reset_request():
     if current_user.is_authenticated:
@@ -106,7 +112,7 @@ def reset_request():
         user = User.query.filter_by(email=form.email.data).first()
         send_reset_email(user)
         flash('An email has been sent with instructions to reset your password.')
-        return redirect(url_for('login'))
+        return redirect(url_for('.login'))
     return render_template('reset_request.html', title='Reset Password', form=form)
 
 
@@ -125,6 +131,6 @@ def reset_token(token):
         user.password_hash = hashed_password
         db.session.commit()
         flash('Your password has been updated! You are now able to log in', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('.login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
 

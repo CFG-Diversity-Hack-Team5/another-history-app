@@ -5,23 +5,28 @@ from flask_login import current_user
 
 public_bp = Blueprint('public_bp', __name__)
 
+
 @public_bp.route('/', methods=['GET', 'POST'])
 def index():
     popular_courses = Course.query.join(
         CourseLike, Course.id == CourseLike.course_id).group_by(Course.id).order_by(func.count().desc()).limit(3).all()
     popular_courses = [course.title for course in popular_courses]
-    featured_course = Course.query.filter(Course.body.like('%Featured_Person_Name%')).first()
+    featured_course = Course.query.filter(Course.body.like('%Featured_Person_Name%')).first()  # to do
     featured_category = featured_course.category
     related_courses = Course.query.filter_by(category=featured_category).limit(3).all()
     related_courses = [course.title for course in related_courses]
 
     if current_user.is_authenticated:
-        return redirect(url_for('user-dashboard'))
+        if current_user.access == 1:
+            return redirect(url_for('user-dashboard_placeholder'))  # to do
+        else:
+            return redirect(url_for('admin_bp.show_admin_dashboard'))
 
     return render_template('index.html',
                            popular_courses=popular_courses,
                            featured=featured_course.title,
                            related_courses=related_courses)
+
 
 @public_bp.route('/courses', methods=['GET','POST'])
 def browse_courses():
