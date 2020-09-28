@@ -33,7 +33,7 @@ class SignupForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField(
-        'Email',
+        'Email address',
         validators=[
             DataRequired(),
             Email(message='Enter a valid email.')
