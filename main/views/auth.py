@@ -1,10 +1,11 @@
-from flask import Blueprint, redirect, render_template, flash, request, session, url_for
+from flask import Blueprint, render_template, flash, request, session, url_for, redirect
 from main.models import User
 from main.views.forms import SignupForm, LoginForm, RequestResetForm, ResetPasswordForm
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import login_required, logout_user, current_user, login_user
+from flask_login import logout_user, current_user, login_user, login_required
 from main.views import db, login_manager, Mail, Message
-
+from functools import wraps
+from    main.models import ACCESS
 
 # Blueprint Configuration
 auth_bp = Blueprint('auth_bp', __name__)
@@ -58,6 +59,7 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user, remember=form.remember_me.data)
+            session['email'] = form.email.data
             next_page = request.args.get('next')
             return redirect(next_page or url_for('user_dashboard_placeholder'))
         flash('Invalid email/password combination')

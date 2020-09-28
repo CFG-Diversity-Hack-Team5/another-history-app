@@ -3,6 +3,9 @@ from main.models import Course, Module, Book, CommunitySubmission
 from sqlalchemy import desc
 from main.views.forms import CourseForm, ModuleForm, BookForm
 from main.views import db
+from main.models import ACCESS
+from flask_login import login_required
+from main.decorators import requires_access_level
 import requests
 import json
 import os
@@ -12,6 +15,7 @@ admin_bp = Blueprint('admin_bp', __name__, url_prefix='/admin')
 
 @admin_bp.route('/courses', methods=['GET', 'POST'])
 @login_required
+@requires_access_level(ACCESS['admin'])
 def submit_course_details():
     form = CourseForm()
     if form.validate_on_submit():
@@ -26,6 +30,7 @@ def submit_course_details():
 
 @admin_bp.route('/courses/<int:course_id>/modules', methods=['GET', 'POST'])
 @login_required
+@requires_access_level(ACCESS['admin'])
 def submit_modules(course_id):
     form = ModuleForm()
     if form.validate_on_submit():
@@ -48,6 +53,7 @@ def submit_modules(course_id):
 
 @admin_bp.route('/courses/<int:course_id>/books', methods=['GET', 'POST'])
 @login_required
+@requires_access_level(ACCESS['admin'])
 def submit_books(course_id):
     form = BookForm()
     api_key = os.environ['API_KEY']
@@ -81,6 +87,7 @@ def submit_books(course_id):
 
 @admin_bp.route('/courses/<int:course_id>', methods=['GET', 'POST'])
 @login_required
+@requires_access_level(ACCESS['admin'])
 def show_admin_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
@@ -93,6 +100,7 @@ def show_admin_course(course_id):
 
 @admin_bp.route('/', methods=['GET', 'POST'])
 @login_required
+@requires_access_level(ACCESS['admin'])
 def show_admin_dashboard():
     courses = Course.query.all()
     return render_template('admin_login.html', courses=courses)
@@ -100,6 +108,7 @@ def show_admin_dashboard():
 
 @admin_bp.route('/courses/<int:id>/delete', methods=['GET', 'POST'])
 @login_required
+@requires_access_level(ACCESS['admin'])
 def delete_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
     db.session.delete(course)
@@ -109,6 +118,7 @@ def delete_course(course_id):
 
 @admin_bp.route('/community_submissions', methods=['GET', 'POST'])
 @login_required
+@requires_access_level(ACCESS['admin'])
 def show_community_submissions():
     community_submissions = CommunitySubmission.query.all()
     return render_template('view_all_collapsible_community_submissions_placeholder',

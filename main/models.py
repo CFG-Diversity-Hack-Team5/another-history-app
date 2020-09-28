@@ -44,6 +44,12 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return '<User {}>'.format(self.email)
 
+    def is_admin(self):
+        return self.access == ACCESS['admin']
+
+    def allowed(self, access_level):
+        return self.access >= access_level
+
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(os.environ['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.user_id}).decode('utf-8')
