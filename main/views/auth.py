@@ -31,13 +31,11 @@ def register():
             login_user(user, remember=form.remember_me.data)  # Log in as newly created user
 
             if user.access == 1:
-                return redirect(url_for('user_dashboard_placeholder'))  # to do
+                return redirect(url_for('user_bp.show_user_dashboard', uid=user.user_id))
             else:
                 return redirect(url_for('admin_bp.show_admin_dashboard'))
         flash('A user already exists with that email address.')
-    return render_template(
-        'signup.jinja2',
-    )
+    return render_template('register.html', form=form)
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -62,9 +60,7 @@ def login():
             return redirect(next_page or url_for('user_dashboard_placeholder'))
         flash('Invalid email/password combination')
         return redirect(url_for('.login'))
-    return render_template(
-        'login.jinja2',
-    )  # to do
+    return render_template('login.jinja2', form=form)  # to do
 
 
 @login_manager.user_loader

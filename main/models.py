@@ -26,11 +26,10 @@ class User(db.Model, UserMixin):
     liked = db.relationship('CourseLike',
                             foreign_keys='CourseLike.user_id',
                             backref='user', lazy='dynamic')
-    submissions = db.relationship("CommunitySubmission", back_populates="user")
     enrolled = db.relationship("Enrolment", foreign_keys='Enrolment.user_id',
                                backref='user', lazy='dynamic')
     completions = db.relationship("CourseCompletion", foreign_keys='CourseCompletion.user_id',
-                                  backref='user',lazy='dynamic')
+                                  backref='user', lazy='dynamic')
 
     def __init__(self, email, password_hash):
         self.email = email
@@ -143,7 +142,7 @@ class CourseLike(db.Model):
         self.course_id = course_id
 
 
-class CommunitySubmission(db.Model):
+'''class CommunitySubmission(db.Model):
     __tablename__ = 'community_submission'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -157,7 +156,7 @@ class CommunitySubmission(db.Model):
         self.user_id = user_id
         self.new_course = new_course
         self.select_course = select_course
-        self.change_course = change_course
+        self.change_course = change_course'''
 
 
 class Module(db.Model):

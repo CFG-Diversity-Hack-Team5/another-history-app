@@ -1,8 +1,9 @@
 from flask import Blueprint, redirect, render_template, url_for, g, flash
-from main.models import Course, Module, Book, CommunitySubmission
+from main.models import Course, Module, Book
 from sqlalchemy import desc
 from main.views.forms import CourseForm, ModuleForm, BookForm
 from main.views import db
+from flask_login import login_required
 import requests
 import json
 import os
@@ -105,13 +106,5 @@ def delete_course(course_id):
     db.session.delete(course)
     db.session.commit()
     return redirect(url_for('.show_admin_dashboard'))
-
-
-@admin_bp.route('/community_submissions', methods=['GET', 'POST'])
-@login_required
-def show_community_submissions():
-    community_submissions = CommunitySubmission.query.all()
-    return render_template('view_all_collapsible_community_submissions_placeholder',
-                           community_submissions=community_submissions)           # to do
 
 

@@ -34,9 +34,9 @@ def browse_courses():
     return render_template('html', courses=courses)
 
 
-@public_bp.route('/courses/<int:course_id>', methods=['GET', 'POST'])
-def show_course(course_id):
-    course = Course.query.filter_by(id=course_id).first()
+@public_bp.route('/courses/<int:cid>', methods=['GET', 'POST'])
+def show_course(cid):
+    course = Course.query.filter_by(id=cid).first()
     modules = Module.query.join(Course, Module.course_id == Course.id).filter(course_id == course_id).all()
     books = course.books
     return render_template("placeholder.html", course=course,
