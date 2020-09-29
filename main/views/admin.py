@@ -93,7 +93,6 @@ def show_admin_course(course_id):
 
 
 @admin_bp.route('/', methods=['GET', 'POST'])
-@login_required
 def show_admin_dashboard():
     courses = Course.query.all()
     return render_template('admin_login.html', courses=courses)

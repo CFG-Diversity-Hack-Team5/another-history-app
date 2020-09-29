@@ -74,7 +74,7 @@ class User(db.Model, UserMixin):
 
     def has_enrolled(self, course):
         return Enrolment.query.filter(Enrolment.user_id == self.id,
-                                      Enrolment.course_id == course.id) > 0
+                                      Enrolment.course_id == course.id).count() > 0
 
     def mark_course_completed(self, course):
         if not self.has_marked_completed(course):
@@ -83,13 +83,13 @@ class User(db.Model, UserMixin):
 
     def has_marked_completed(self, course):
         return CourseCompletion.query.filter(CourseCompletion.user_id == self.id,
-                                             Course.Completion.course_id == course.id) > 0
+                                             Course.Completion.course_id == course.id).count() > 0
 
 
 class Course(db.Model):
     __tablename__ = 'course'
-    __searchable__ = ['title', 'summary']  # indexed fields
-    __analyzer__ = StemmingAnalyzer() | DoubleMetaphoneFilter()
+    '''__searchable__ = ['title', 'summary']  # indexed fields
+    __analyzer__ = StemmingAnalyzer() | DoubleMetaphoneFilter()'''
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(), nullable=False)

@@ -22,8 +22,8 @@ def index():
 
 '''@public_bp.route('/courses', methods=['GET', 'POST'])
 def browse_courses():
-    courses = Course.query.all()
-    return render_template('html', courses=courses)'''
+    course = Course.query.all()
+    return render_template('course.html', courses=courses)'''
 
 
 @public_bp.route('/courses/<int:cid>', methods=['GET', 'POST'])
@@ -31,9 +31,11 @@ def show_course(cid):
     course = Course.query.filter_by(id=cid).first()
     modules = Module.query.join(Course, Module.course_id == Course.id).filter(Module.course_id == cid).all()
     books = course.books
+    similar_courses = Course.query.filter_by(category=course.category).limit(2).all()
     return render_template("course.html", course=course,
                            modules=modules,
-                           books=books)
+                           books=books,
+                           similar_courses=similar_courses)
 
 
 @public_bp.route('/about', methods=['GET'])
