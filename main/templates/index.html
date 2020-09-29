@@ -18,7 +18,7 @@
     <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="style.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Gudea:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -45,7 +45,7 @@
     <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><span class="material-icons">earch</span></button> -->
     <form class="form-inline">
        <div class ="signin_button">
-         <a href="sign_in.html">Sign in</a>
+         <a href="{{ url_for('auth_bp.login') }}">Sign in</a>
       </div> 
     </form>
   </form>
@@ -62,7 +62,7 @@
       </div>
 
       <div class="container heading">
-        <h2>Most popular courses this week</h2>
+        <h2>Browse all courses</h2>
       </div>
 
       
@@ -92,7 +92,7 @@
       </div>
 
       <div class="container_join">
-        <h3><a href="signin.html">Join today and begin your unlearning journey ></a></h3>
+        <h3><a href="{{ url_for('auth_bp.login') }}">Join today and begin your unlearning journey ></a></h3>
       </div>
 
       <footer class="footer">

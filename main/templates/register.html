@@ -18,7 +18,7 @@
     <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="style.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Gudea:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -41,7 +41,7 @@
         <div class="header clearfix">
           <nav class="navbar navbar-light">
       <a class="navbar-brand" href= "{{ url_for('public_bp.index') }}"><b>Another History</b></a>
-       <form class="form-inline">
+       <!--<form class="form-inline"> -->
         <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search all courses" aria-label="Search">
         <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><span class="material-icons">earch</span></button> -->
         <!-- <form class="form-inline">
@@ -49,7 +49,7 @@
              <a href="sign_in.html">Sign in</a>
           </div> 
         </form> -->
-      </form>
+     <!-- </form>-->
     </nav>
     </div>
 
