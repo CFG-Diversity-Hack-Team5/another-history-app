@@ -14,11 +14,8 @@ def index():
 
     courses = Course.query.all()
 
-    if current_user.is_authenticated:
-        if current_user.access == 1:
-            return redirect(url_for('user_bp.show_user_dashboard'))  # to do
-        else:
-            return redirect(url_for('admin_bp.show_admin_dashboard'))
+    '''if current_user.is_authenticated:
+        return redirect(url_for('user_bp.show_user_dashboard'))'''
 
     return render_template('index.html', courses=courses)
 
@@ -32,9 +29,9 @@ def browse_courses():
 @public_bp.route('/courses/<int:cid>', methods=['GET', 'POST'])
 def show_course(cid):
     course = Course.query.filter_by(id=cid).first()
-    modules = Module.query.join(Course, Module.course_id == Course.id).filter(course_id == course_id).all()
+    modules = Module.query.join(Course, Module.course_id == Course.id).filter(Module.course_id == cid).all()
     books = course.books
-    return render_template("placeholder.html", course=course,
+    return render_template("course.html", course=course,
                            modules=modules,
                            books=books)
 

@@ -18,6 +18,9 @@ def register():
     GET requests serve sign-up page.
     POST requests validate form & user creation.
     """
+    if current_user.is_authenticated:
+        flash('You have already registered.')
+        return redirect(url_for('user_bp.show_user_dashboard', uid=current_user.id))
     form = SignupForm()
     if form.validate_on_submit():
         existing_user = User.query.filter_by(email=form.email.data).first()
@@ -30,10 +33,7 @@ def register():
             db.session.commit()  # Create new user
             login_user(user, remember=form.remember_me.data)  # Log in as newly created user
 
-            if user.access == 1:
-                return redirect(url_for('user_bp.show_user_dashboard', uid=user.user_id))
-            else:
-                return redirect(url_for('admin_bp.show_admin_dashboard'))
+            return redirect(url_for('public_bp.index'))
         flash('A user already exists with that email address.')
     return render_template('register.html', form=form)
 
@@ -57,7 +57,7 @@ def login():
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user, remember=form.remember_me.data)
             next_page = request.args.get('next')
-            return redirect(next_page or url_for('user_bp.show_user_dashboard', uid=user.user_id))
+            return redirect(next_page or url_for('user_bp.show_user_dashboard', uid=user.id))
         flash('Invalid email/password combination')
         return redirect(url_for('.login'))
     return render_template('sign_in.html', form=form)

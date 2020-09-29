@@ -13,7 +13,7 @@ admin_bp = Blueprint('admin_bp', __name__, url_prefix='/admin')
 
 @admin_bp.route('/courses', methods=['GET', 'POST'])
 @login_required
-def submit_course_details():
+def create_course():
     form = CourseForm()
     if form.validate_on_submit():
         course = Course(title=form.title.data,
@@ -27,7 +27,7 @@ def submit_course_details():
 
 @admin_bp.route('/courses/<int:course_id>/modules', methods=['GET', 'POST'])
 @login_required
-def submit_modules(course_id):
+def create_module(course_id):
     form = ModuleForm()
     if form.validate_on_submit():
         last_module = Module.query.filter_by(course_id=course_id).order_by(desc(Module.week_number)).first()
@@ -49,7 +49,7 @@ def submit_modules(course_id):
 
 @admin_bp.route('/courses/<int:course_id>/books', methods=['GET', 'POST'])
 @login_required
-def submit_books(course_id):
+def create_book(course_id):
     form = BookForm()
     api_key = os.environ['API_KEY']
     if form.validate_on_submit():

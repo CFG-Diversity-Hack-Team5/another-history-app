@@ -9,7 +9,7 @@ user_bp = Blueprint('user_bp', __name__)
 @user_bp.route('/user/<int:uid>', methods=['GET', 'POST'])
 @login_required
 def show_user_dashboard(uid):
-    user = User.query.filter_by(user_id=uid).one()
+    user = User.query.filter_by(id=uid).one()
     current_courses = user.enrolled
     liked_courses = user.liked
     completed_courses = user.completions
@@ -41,7 +41,7 @@ def community_submission(user_id):
 @login_required
 def like_action(uid, cid, action):
     course = Course.query.filter_by(id=cid).first_or_404()
-    user = User.query.filter_by(user_id=uid).first()
+    user = User.query.filter_by(id=uid).first()
     if action == 'like':
         user.like_course(course)
         db.session.commit()
@@ -55,7 +55,7 @@ def like_action(uid, cid, action):
 @login_required
 def enrol_action(uid, cid, action):
     course = Course.query.filter_by(id=cid).first_or_404()
-    user = User.query.filter_by(user_id=uid).first()
+    user = User.query.filter_by(id=uid).first()
     if action == 'enrol':
         user.enrol(course)
         db.session.commit()
@@ -66,7 +66,7 @@ def enrol_action(uid, cid, action):
 @login_required
 def complete_action(uid, cid, action):
     course = Course.query.filter_by(id=cid).first_or_404()
-    user = User.query.filter_by(user_id=uid).first()
+    user = User.query.filter_by(id=uid).first()
     if action == 'like':
         user.mark_course_completed(course)
         db.session.commit()

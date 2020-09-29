@@ -15,17 +15,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <!--<link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">-->
 
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Gudea:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -39,18 +35,34 @@
     <div class="container">
         <div class="header clearfix">
       <nav class="navbar navbar-light">
-  <a class="navbar-brand" href="index.html"><b>Another History</b></a>
+  <a class="navbar-brand" href="{{ url_for('public_bp.index') }}"><b>Another History</b></a>
   <form class="form-inline">
     <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search all courses" aria-label="Search">
     <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><span class="material-icons">earch</span></button> -->
     <form class="form-inline">
+        {% if current_user.is_authenticated %}
        <div class ="signin_button">
+         <a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
+      </div>
+        {% else %}
+         <div class ="signin_button">
          <a href="{{ url_for('auth_bp.login') }}">Sign in</a>
-      </div> 
+      </div>
+        {% endif %}
     </form>
   </form>
 </nav>
 </div>
+
+        <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+         </div>
 
       <div class="jumbotron">
         <h1>A brighter<br>future is built on<br>
@@ -69,7 +81,15 @@
 
       <div class="row marketing">
         <div class="col-lg-6">
-          <h4><a href="course.html">Course Name</a></h4>
+            {% for course in courses %}
+          <h4><a href="{{ url_for('public_bp.show_course', cid=course.id) }}">{{ course.title }}</a></h4>
+          <p>{{ course.summary }}</p>
+            {% endfor %}
+
+        </div>
+
+        <!--<div class="col-lg-6">
+          <h4><a href="">Course Name</a></h4>
           <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
 
           <h4><a href="">Course Name</a></h4>
@@ -77,22 +97,11 @@
 
           <h4><a href="">Course Name</a></h4>
           <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
-        </div>
-
-        <div class="col-lg-6">
-          <h4><a href="">Course Name</a></h4>
-          <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
-
-          <h4><a href="">Course Name</a></h4>
-          <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
-
-          <h4><a href="">Course Name</a></h4>
-          <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
-        </div>
+        </div>-->
       </div>
 
       <div class="container_join">
-        <h3><a href="{{ url_for('auth_bp.login') }}">Join today and begin your unlearning journey ></a></h3>
+        <h3><a href="{{ url_for('auth_bp.register') }}">Join today and begin your unlearning journey ></a></h3>
       </div>
 
       <footer class="footer">
