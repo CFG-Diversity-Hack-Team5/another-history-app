@@ -15,17 +15,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <!--<link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">-->
 
     <!-- Custom styles for this template -->
-    <link href="style.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Gudea:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -39,7 +35,7 @@
     <div class="container">
       <div class="header clearfix">
         <nav class="navbar navbar-light">
-    <a class="navbar-brand" href="index.html"><b>Another History</b></a>
+    <a class="navbar-brand" href="{{ url_for('public_bp.index') }}"><b>Another History</b></a>
     <!-- <form class="form-inline"> -->
       <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search all courses" aria-label="Search">
       <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><span class="material-icons">earch</span></button> -->
@@ -52,27 +48,36 @@
   </nav>
   </div>
 
-      <form>
+      <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+         </div>
+
+
+      {% from 'bootstrap/form.html' import render_field %}
+      <form method="post">
+        {{ form.csrf_token() }}
         <h2>Sign in</h2><br>
-        <div class="form-group">
-          <label for="exampleInputEmail1">Email address</label>
-          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+        <div class="form-group" style="width: 50%">
+          {{ render_field(form.email, class='form-control', placeholder='Enter email') }}
+          {{ render_field(form.password, type='password', class='form-control', placeholder='Password') }}
         </div>
-        <div class="form-group">
-          <label for="exampleInputPassword1">Password</label>
-          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-        </div>
+
         <div class="form-group form-check">
-          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-          <label class="form-check-label" for="exampleCheck1">Remember me</label>
+          {{ render_field(form.remember_me, class='form-check-input') }}
         </div>
         <div class = "sign_in_questions">
-          <a href="#">Forgot password?</a><br><br>
+          <a href="{{ url_for('auth_bp.reset_request') }}">Forgot password?</a><br><br>
         </div>
         <div class = "sign_in_questions">
-          Not signed up yet? <a href="register.html">Register here</a><br><br>
+          Not signed up yet? <a href="{{ url_for('auth_bp.register') }}">Register here</a><br><br>
         </div>
-        <h5><a href="login.html">Sign in</a></h5>
+        {{ render_field(form.submit) }}
       </form>
 
       <footer class="footer">

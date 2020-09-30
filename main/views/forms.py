@@ -9,21 +9,18 @@ from wtforms.validators import (DataRequired,
                                 EqualTo,
                                 Length,
                                 ValidationError)
-from main.models import User, Course
+from main.models import User
 
 
 class SignupForm(FlaskForm):
 
-    email = StringField('Email', [
+    email = StringField('Email address', [
         Email(message='Not a valid email address.'),
         DataRequired()])
     password = PasswordField('Password', [
         DataRequired(message="Please enter a password."),
         Length(min=6, message='Select a stronger password.')
     ])
-    confirmPassword = PasswordField('Repeat Password', [
-            EqualTo(password, message='Passwords must match.')
-            ])
 
     remember_me = BooleanField('Remember Me', default=False)
     submit = SubmitField('Register')
@@ -36,7 +33,7 @@ class SignupForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField(
-        'Email',
+        'Email address',
         validators=[
             DataRequired(),
             Email(message='Enter a valid email.')
@@ -65,7 +62,7 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 
-class CommunitySubmissionForm(FlaskForm):
+'''class CommunitySubmissionForm(FlaskForm):
     new_course = StringField(validators=[DataRequired()])
 
     course_choices = Course.query.all()
@@ -73,7 +70,7 @@ class CommunitySubmissionForm(FlaskForm):
     select_course = SelectField(u'Course Name', choices=course_choices, validators=[DataRequired()])
 
     change_course = StringField(validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Submit')'''
 
 
 class CourseForm(FlaskForm):

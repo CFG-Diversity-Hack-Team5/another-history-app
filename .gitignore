@@ -3,4 +3,6 @@ instance/
 env/
 main/tests/__pycache__/
 main/views/__pycache__/
+__pycache__/
+main/__pycache__/
 

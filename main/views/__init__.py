@@ -5,8 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail, Message
-from main.views.forms import SearchForm
-from main.models import Course
+from flask_bootstrap import Bootstrap
+'''from main.views.forms import SearchForm
+from main.models import Course'''
 
 
 csrf = CSRFProtect()
@@ -14,10 +15,11 @@ db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()
+bootstrap = Bootstrap()
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='../static', template_folder='../templates')
     app.config.from_object(os.environ['APP_SETTINGS'])
 
     csrf.init_app(app)
@@ -25,8 +27,12 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
     mail.init_app(app)
+    bootstrap.init_app(app)
 
-    @app.before_request
+    with app.app_context():
+        db.create_all()
+
+    '''@app.before_request
     def before_request():
         g.search_form = SearchForm()
 
@@ -41,7 +47,7 @@ def create_app():
         results = Course.query.search(query, limit=10).all()
         return render_template('search_results.html',
                                query=query,
-                               results=results)
+                               results=results)'''
 
     from main.views.auth import auth_bp
     app.register_blueprint(auth_bp)

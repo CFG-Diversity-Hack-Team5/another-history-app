@@ -15,17 +15,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <!--<link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">-->
 
     <!-- Custom styles for this template -->
-    <link href="style.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Gudea:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -39,18 +35,27 @@
     <div class="container">
       <div class="header clearfix">
     <nav class="navbar navbar-light">
-<a class="navbar-brand" href="index.html"><b>Another History</b></a>
+<a class="navbar-brand" href="{{ url_for('public_bp.index') }}"><b>Another History</b></a>
 <form class="form-inline">
   <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search all courses" aria-label="Search">
   <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><span class="material-icons">earch</span></button> -->
   <form class="form-inline">
      <div class ="signin_button">
-       <a href="login.html">Username icon here</a>
+       <a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
     </div> 
   </form>
 </form>
 </nav>
 </div>
+      <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+         </div>
 
       <div class="jumbotron">
         <h1>Your unlearning journey</h1>
@@ -59,38 +64,41 @@
 
       <div class="row">
         <div class="col-sm-4">
-          <h4>Welcome back {username}!</h4><br>
-          <!-- <p>Keep track of your unlearning journey here</p> -->
+          <!-- <h4>Keep track of your unlearning journey here</h4><br>-->
+          <!--<p>Keep track of your unlearning journey here</p>-->
+          <h4>Keep track of your courses here</h4>
         </div>
         <div class="col-sm-8">
           <h3>Current courses</h3><br>
-          <h4><a href="">Course name</a></h4>
-          <p>Brief description</p>
+          {% for course in current_courses %}
+          <h4><a href="{{ url_for('public_bp.show_course', cid=course.id) }}">{{ course.title }}</a></h4>
+          <p>{{ course.summary }}</p>
           <hr>
+          {% endfor %}
 
           <h3>Liked courses</h3><br>
-          <h4><a href="">Course name</a></h4>
-          <p>Brief description</p>
+          {% for course in liked_courses %}
+          <h4><a href="{{ url_for('public_bp.show_course', cid=course.id) }}">{{ course.title }}</a></h4>
+          <p>{{ course.summary }}</p>
           <br>
-          <h4><a href="">Course name</a></h4>
-          <p>Brief description</p>
           <hr>
+          {% endfor %}
 
           <h3>Completed courses</h3><br>
-          <h4><a href="">Course name</a></h4>
-          <p>Brief description</p>
+          {% for course in completed_courses %}
+          <h4><a href="{{ url_for('public_bp.show_course', cid=course.id) }}">{{ course.title }}</a></h4>
+          <p>{{ course.summary }}</p>
           <br>
-          <h4><a href="">Course name</a></h4>
-          <p>Brief description</p>
           <hr>
+          {% endfor %}
         </div>
       </div>
 
 
     
 
-    <div class="container heading">
-      <h2>Courses suggeted for you</h2>
+   <!-- <div class="container heading">
+      <h2>Courses suggested for you</h2>
     </div>
 
     <div class="row marketing">
@@ -103,7 +111,7 @@
         <h4><a href="">Course Name</a></h4>
         <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
       </div>
-    </div>
+    </div>-->
 
       <footer class="footer">
         <p>Another History was made for Code First Girls Diversity hackathon</p>

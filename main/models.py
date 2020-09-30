@@ -19,34 +19,28 @@ ACCESS = {
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
-    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True)
     password_hash = db.Column(db.String(128), nullable=False)
-    access = db.Column(db.Integer, nullable=False)
+    '''access = db.Column(db.Integer, nullable=False)'''
     liked = db.relationship('CourseLike',
                             foreign_keys='CourseLike.user_id',
                             backref='user', lazy='dynamic')
-    submissions = db.relationship("CommunitySubmission", back_populates="user")
     enrolled = db.relationship("Enrolment", foreign_keys='Enrolment.user_id',
                                backref='user', lazy='dynamic')
     completions = db.relationship("CourseCompletion", foreign_keys='CourseCompletion.user_id',
-                                  backref='user',lazy='dynamic')
+                                  backref='user', lazy='dynamic')
 
     def __init__(self, email, password_hash):
         self.email = email
         self.password_hash = password_hash
-
-        if email not in os.environ['ADMINS']:
-            self.access = ACCESS['user']
-        else:
-            self.access = ACCESS['admin']
 
     def __repr__(self):
         return '<User {}>'.format(self.email)
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(os.environ['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.user_id}).decode('utf-8')
+        return s.dumps({'user_id': self.id}).decode('utf-8')
 
     @staticmethod
     def verify_reset_token(token):
@@ -59,43 +53,43 @@ class User(db.Model, UserMixin):
 
     def like_course(self, course):
         if not self.has_liked_post(course):
-            like = CourseLike(user_id=self.user_id, course_id=course.id)
+            like = CourseLike(user_id=self.id, course_id=course.id)
             db.session.add(like)
 
     def unlike_course(self, course):
         if self.has_liked_post(course):
             CourseLike.query.filter_by(
-                user_id=self.user_id,
+                user_id=self.id,
                 course_id=course.id).delete()
 
     def has_liked_course(self, course):
         return CourseLike.query.filter(
-            CourseLike.user_id == self.user_id,
+            CourseLike.user_id == self.id,
             CourseLike.course_id == course.id).count() > 0
 
     def enrol(self, course):
         if not self.has_enrolled(course):
-            enrolment = Enrolment(user_id=self.user_id, course_id=course.id)
+            enrolment = Enrolment(user_id=self.id, course_id=course.id)
             db.session.add(enrolment)
 
     def has_enrolled(self, course):
-        return Enrolment.query.filter(Enrolment.user_id == self.user_id,
-                                      Enrolment.course_id == course.id) > 0
+        return Enrolment.query.filter(Enrolment.user_id == self.id,
+                                      Enrolment.course_id == course.id).count() > 0
 
     def mark_course_completed(self, course):
         if not self.has_marked_completed(course):
-            completion = CourseCompletion(user_id=self.user_id, course_id=course.id)
+            completion = CourseCompletion(user_id=self.id, course_id=course.id)
             db.session.add(completion)
 
     def has_marked_completed(self, course):
-        return CourseCompletion.query.filter(CourseCompletion.user_id == self.user_id,
-                                             Course.Completion.course_id == course.id) > 0
+        return CourseCompletion.query.filter(CourseCompletion.user_id == self.id,
+                                             Course.Completion.course_id == course.id).count() > 0
 
 
 class Course(db.Model):
     __tablename__ = 'course'
-    __searchable__ = ['title', 'summary']  # indexed fields
-    __analyzer__ = StemmingAnalyzer() | DoubleMetaphoneFilter()
+    '''__searchable__ = ['title', 'summary']  # indexed fields
+    __analyzer__ = StemmingAnalyzer() | DoubleMetaphoneFilter()'''
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(), nullable=False)
@@ -135,7 +129,7 @@ class CourseLike(db.Model):
     __tablename__ = 'course_like'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id', ondelete='CASCADE'), nullable=False)
 
     def __init__(self, user_id, course_id):
@@ -143,7 +137,7 @@ class CourseLike(db.Model):
         self.course_id = course_id
 
 
-class CommunitySubmission(db.Model):
+'''class CommunitySubmission(db.Model):
     __tablename__ = 'community_submission'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -157,7 +151,7 @@ class CommunitySubmission(db.Model):
         self.user_id = user_id
         self.new_course = new_course
         self.select_course = select_course
-        self.change_course = change_course
+        self.change_course = change_course'''
 
 
 class Module(db.Model):
@@ -181,7 +175,7 @@ class Enrolment(db.Model):
     __tablename__ = 'enrolment'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id', ondelete='CASCADE'), nullable=False)
 
     def __init__(self, user_id, course_id):
@@ -193,7 +187,7 @@ class CourseCompletion(db.Model):
     __tablename__ = 'course_completion'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id', ondelete='CASCADE'), nullable=False)
 
     def __init__(self, user_id, course_id):
