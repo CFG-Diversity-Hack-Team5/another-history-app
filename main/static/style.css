@@ -134,3 +134,24 @@ h1 {
 .container_button {
   padding: 1em 0em 5em 0em;
 }
+
+/* Admin login */
+
+.container_heading_second {
+  padding-top: 3em;
+}
+
+/* Form pages */
+p.next_button {
+  text-align: right;
+  font-size: 1.25em;
+}
+
+p.back_button {
+  text-align: left;
+  font-size: 1.25em;
+}
+
+p.submit {
+  text-align: right;
+}
