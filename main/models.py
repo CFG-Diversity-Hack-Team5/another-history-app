@@ -89,7 +89,7 @@ class User(db.Model, UserMixin):
 
     def has_marked_completed(self, course):
         return CourseCompletion.query.filter(CourseCompletion.user_id == self.id,
-                                             Course.Completion.course_id == course.id).count() > 0
+                                             CourseCompletion.course_id == course.id).count() > 0
 
 
 class Course(db.Model):
