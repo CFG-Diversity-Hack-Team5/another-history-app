@@ -2,12 +2,15 @@ from flask import Blueprint, redirect, render_template, url_for, flash, request
 from flask_login import login_required
 from main.models import Course, User
 from main.views import db
+from main.models import ACCESS
+from main.decorators import requires_access_level
 
 user_bp = Blueprint('user_bp', __name__)
 
 
 @user_bp.route('/user/<int:uid>', methods=['GET', 'POST'])
 @login_required
+@requires_access_level(ACCESS['user'])
 def show_user_dashboard(uid):
     user = User.query.filter_by(id=uid).one()
     current_courses = user.enrolled
@@ -39,6 +42,7 @@ def community_submission(user_id):
 
 @user_bp.route('/user/<int:uid>/like/<int:cid>/<action>')
 @login_required
+@requires_access_level(ACCESS['user'])
 def like_action(uid, cid, action):
     course = Course.query.filter_by(id=cid).first_or_404()
     user = User.query.filter_by(id=uid).first()
@@ -53,6 +57,7 @@ def like_action(uid, cid, action):
 
 @user_bp.route('/user/<int:uid>/enrol/<int:cid>/<action>')
 @login_required
+@requires_access_level(ACCESS['user'])
 def enrol_action(uid, cid, action):
     course = Course.query.filter_by(id=cid).first_or_404()
     user = User.query.filter_by(id=uid).first()
@@ -64,6 +69,7 @@ def enrol_action(uid, cid, action):
 
 @user_bp.route('/user/<int:uid>/complete/<int:cid>/<action>')
 @login_required
+@requires_access_level(ACCESS['user'])
 def complete_action(uid, cid, action):
     course = Course.query.filter_by(id=cid).first_or_404()
     user = User.query.filter_by(id=uid).first()
