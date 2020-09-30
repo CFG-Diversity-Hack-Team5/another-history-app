@@ -29,11 +29,15 @@ def register():
                 email=form.email.data,
                 password_hash=generate_password_hash(form.password.data)
             )
+            if form.email.data == "another.history.team@gmail.com":
+                user.access = 2
             db.session.add(user)
             db.session.commit()  # Create new user
             login_user(user, remember=form.remember_me.data)  # Log in as newly created user
-
-            return redirect(url_for('public_bp.index'))
+            if user.is_admin():
+                return redirect(url_for('admin_bp.show_admin_dashboard'))
+            else:
+                return redirect(url_for('public_bp.index'))
         flash('A user already exists with that email address.')
     return render_template('register.html', form=form)
 
@@ -48,7 +52,7 @@ def login():
     """
     # Bypass if user is logged in
     if current_user.is_authenticated:
-        return redirect(url_for('user_bp.show_user_dashboard', uid=current_user.user_id))
+        return redirect(url_for('user_bp.show_user_dashboard', uid=current_user.id))
 
     form = LoginForm()
     # Validate login attempt
@@ -56,8 +60,12 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user, remember=form.remember_me.data)
+            session['email'] = form.email.data
             next_page = request.args.get('next')
-            return redirect(next_page or url_for('user_bp.show_user_dashboard', uid=user.id))
+            if user.access == 1:
+                return redirect(next_page or url_for('user_bp.show_user_dashboard', uid=user.id))
+            else:
+                return redirect(next_page or url_for('admin_bp.show_admin_dashboard'))
         flash('Invalid email/password combination')
         return redirect(url_for('.login'))
     return render_template('sign_in.html', form=form)

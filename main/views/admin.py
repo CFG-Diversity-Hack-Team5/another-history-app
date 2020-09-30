@@ -3,7 +3,8 @@ from main.models import Course, Module, Book
 from sqlalchemy import desc
 from main.views.forms import CourseForm, ModuleForm, BookForm
 from main.views import db
-from flask_login import login_required
+from main.models import ACCESS
+from main.decorators import requires_access_level
 import requests
 import json
 import os
@@ -12,7 +13,7 @@ admin_bp = Blueprint('admin_bp', __name__, url_prefix='/admin')
 
 
 @admin_bp.route('/courses', methods=['GET', 'POST'])
-@login_required
+@requires_access_level(ACCESS['admin'])
 def create_course():
     form = CourseForm()
     if form.validate_on_submit():
@@ -26,7 +27,7 @@ def create_course():
 
 
 @admin_bp.route('/courses/<int:course_id>/modules', methods=['GET', 'POST'])
-@login_required
+@requires_access_level(ACCESS['admin'])
 def create_module(course_id):
     form = ModuleForm()
     if form.validate_on_submit():
@@ -48,7 +49,7 @@ def create_module(course_id):
 
 
 @admin_bp.route('/courses/<int:course_id>/books', methods=['GET', 'POST'])
-@login_required
+@requires_access_level(ACCESS['admin'])
 def create_book(course_id):
     form = BookForm()
     api_key = os.environ['API_KEY']
@@ -81,7 +82,7 @@ def create_book(course_id):
 
 
 @admin_bp.route('/courses/<int:course_id>', methods=['GET', 'POST'])
-@login_required
+@requires_access_level(ACCESS['admin'])
 def show_admin_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
@@ -93,13 +94,14 @@ def show_admin_course(course_id):
 
 
 @admin_bp.route('/', methods=['GET', 'POST'])
+@requires_access_level(ACCESS['admin'])
 def show_admin_dashboard():
     courses = Course.query.all()
     return render_template('admin_login.html', courses=courses)
 
 
 @admin_bp.route('/courses/<int:id>/delete', methods=['GET', 'POST'])
-@login_required
+@requires_access_level(ACCESS['admin'])
 def delete_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
     db.session.delete(course)

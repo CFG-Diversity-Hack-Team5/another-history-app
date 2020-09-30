@@ -22,7 +22,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True)
     password_hash = db.Column(db.String(128), nullable=False)
-    '''access = db.Column(db.Integer, nullable=False)'''
+    access = db.Column(db.Integer, nullable=False, default=1)
     liked = db.relationship('CourseLike',
                             foreign_keys='CourseLike.user_id',
                             backref='user', lazy='dynamic')
@@ -37,6 +37,12 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return '<User {}>'.format(self.email)
+
+    def is_admin(self):
+        return self.access == ACCESS['admin']
+
+    def allowed(self, access_level):
+        return self.access >= access_level
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(os.environ['SECRET_KEY'], expires_sec)
