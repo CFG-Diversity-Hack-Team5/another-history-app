@@ -52,7 +52,10 @@ def login():
     """
     # Bypass if user is logged in
     if current_user.is_authenticated:
-        return redirect(url_for('user_bp.show_user_dashboard', uid=current_user.id))
+        if current_user.is_admin():
+            return redirect(url_for('admin_bp.show_admin_dashboard'))
+        else:
+            return redirect(url_for('user_bp.show_user_dashboard', uid=current_user.id))
 
     form = LoginForm()
     # Validate login attempt
