@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, url_for, g, flash
+from flask import Blueprint, redirect, render_template, url_for, request, flash
 from main.models import Course, Module, Book
 from sqlalchemy import desc
 from main.views.forms import CourseForm, ModuleForm, BookForm
@@ -82,7 +82,7 @@ def create_book(course_id):
     return render_template('book_form.html', form=form)
 
 
-@admin_bp.route('/courses/<int:course_id>', methods=['GET', 'POST'])
+'''@admin_bp.route('/courses/<int:course_id>', methods=['GET', 'POST'])
 @requires_access_level(ACCESS['admin'])
 def show_admin_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
@@ -91,7 +91,7 @@ def show_admin_course(course_id):
         return redirect(url_for('.show_admin_dashboard'))
     modules = Module.query.filter(course_id == course_id).all()
     books = course.books
-    return render_template('course.html', course=course, modules=modules, books=books)
+    return render_template('course.html', course=course, modules=modules, books=books)'''
 
 
 @admin_bp.route('/', methods=['GET', 'POST'])
@@ -110,7 +110,7 @@ def delete_course(course_id):
     return redirect(url_for('.show_admin_dashboard'))
 
 
-'''@admin_bp.route('/courses/<int:course_id/update', methods=['GET', 'POST'])
+@admin_bp.route('/courses/<int:course_id>/update', methods=['GET', 'POST'])
 @requires_access_level(ACCESS['admin'])
 def update_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
@@ -119,10 +119,15 @@ def update_course(course_id):
         course.title = form.title.data
         course.summary = form.summary.data
         course.category = form.category.data
-
         db.session.commit()
+        flash('Your changes have been saved.')
         return redirect(url_for('.show_admin_dashboard'))
-    return render_template('.update_course.html', form=form)'''
+    elif request.method == 'GET':
+        form.title.data = course.title
+        form.summary.data = course.summary
+        form.category.data = course.category
+    return render_template('course_form.html', form=form)
+
 
 
 

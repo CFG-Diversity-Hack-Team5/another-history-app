@@ -58,12 +58,12 @@ class User(db.Model, UserMixin):
         return User.query.get(user_id)
 
     def like_course(self, course):
-        if not self.has_liked_post(course):
+        if not self.has_liked_course(course):
             like = CourseLike(user_id=self.id, course_id=course.id)
             db.session.add(like)
 
     def unlike_course(self, course):
-        if self.has_liked_post(course):
+        if self.has_liked_course(course):
             CourseLike.query.filter_by(
                 user_id=self.id,
                 course_id=course.id).delete()
@@ -102,11 +102,11 @@ class Course(db.Model):
     summary = db.Column(db.String(), nullable=False)
     category = db.Column(db.String(), unique=False, nullable=False)
     created = db.Column(db.DateTime(timezone=True), server_default=func.now(), nullable=False)
-    books = db.relationship("Book", back_populates="courses")
-    modules = db.relationship("Module", back_populates="courses")
-    likes = db.relationship("CourseLike", backref='course', lazy='dynamic')
-    enrolments = db.relationship("Enrolment", backref='course', lazy='dynamic')
-    completions = db.relationship("CourseCompletion", backref='course', lazy='dynamic')
+    books = db.relationship("Book", back_populates="courses", cascade="all, delete")
+    modules = db.relationship("Module", back_populates="courses", cascade="all, delete")
+    likes = db.relationship("CourseLike", backref='course', lazy='dynamic', cascade="all, delete")
+    enrolments = db.relationship("Enrolment", backref='course', lazy='dynamic', cascade="all, delete")
+    completions = db.relationship("CourseCompletion", backref='course', lazy='dynamic', cascade="all, delete")
 
     def __init__(self, title, category, summary):
         self.title = title

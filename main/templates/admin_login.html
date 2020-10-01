@@ -51,6 +51,15 @@
 </form>
 </nav>
 </div>
+        <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+         </div>
 
       <div class="jumbotron">
         <h1>Admin dashboard</h1>
@@ -64,8 +73,8 @@
       </div>-->
 
         
-      <div class="row marketing">
-        <!--<div class="col-sm-6">
+     <!-- <div class="row marketing">
+        <div class="col-sm-6">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Community submissions</h5>
@@ -73,7 +82,7 @@
               <a href="#">Submissions</a>
             </div>
           </div>
-        </div>-->
+        </div>
         <div class="col-sm-6">
           <div class="card">
             <div class="card-body">
@@ -83,29 +92,49 @@
             </div>
           </div>
         </div>
+      </div>-->
+    <div class="container_heading">
+        <h2>Create new courses</h2>
       </div>
 
-
+      <div class="container_courses">
+          <div class="card">
+            <h5 class="card-header">Create course</h5>
+            <div class="card-body">
+            <p class="card-text">
+              Step 1. Create course name, category and summary<br>
+              Step 2. Create module name and content<br>
+              Step 3. Add books to the course recommended reading list
+            <p class="card-text"></p>
+            </p>
+            </div>
+              <div class="card-footer">
+                <a href="{{ url_for('admin_bp.create_course')}}">Create course content</a>
+            </div>
+            </div>
+        </div>
       
 
     
 
     <div class="container heading">
-      <h3>Current courses</h3>
+      <h3>Edit existing courses</h3>
     </div>
-   {% for course in courses %}
+
     <div class="container_courses">
       <div class="card">
+          {% for course in courses %}
         <h5 class="card-header">{{ course.title }}</h5>
         <div class="card-body">
         <p class="card-text">{{ course.summary }}</p>
         </div>
            <div class="card-footer">
-          <a href="{{ url_for('admin_bp.delete_course', course_id=course.id)}}" class="btn btn-danger">Delete</a>
+               <a class="btn btn-success" href="{{ url_for('admin_bp.update_course', course_id=course.id) }}" role="button">Edit course</a>
+               <a class="btn btn-danger" href="{{ url_for('admin_bp.delete_course', course_id=course.id) }}"  role="button">Delete</a>
         </div>
+          {% endfor %}
         </div>
     </div>
-    {% endfor %}
 
       <footer class="footer">
         <p>Another History was made for Code First Girls Diversity hackathon</p>

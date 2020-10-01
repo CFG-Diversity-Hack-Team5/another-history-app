@@ -20,6 +20,8 @@ def register():
     """
     if current_user.is_authenticated:
         flash('You have already registered.')
+        if current_user.is_admin():
+            return redirect(url_for('admin_bp.show_admin_dashboard'))
         return redirect(url_for('user_bp.show_user_dashboard', uid=current_user.id))
     form = SignupForm()
     if form.validate_on_submit():
