@@ -54,8 +54,8 @@ def create_book(course_id):
     form = BookForm()
     if form.validate_on_submit():
         title = form.book_title.data
-        query = title.replace(" ", "")
-        params = {'q': query, 'key': os.environ['API_KEY']}
+        #query = title.replace(" ", "%20")
+        params = {'q': title, 'key': os.environ['API_KEY']}
         response = requests.get('https://www.googleapis.com/books/v1/volumes', params=params)
         if response.status_code == 200:
             api_response = json.loads(response.text)

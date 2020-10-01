@@ -224,7 +224,7 @@
         {% for book in books %}
       <div class="col-lg-6">
         <h4><a href="{{ book.preview_link }}">{{ book.book_title }}</a></h4>
-        <p>Thumbnail placeholder</p>
+          <img src="{{ book.thumbnail }}" alt="" class="thumbnail" />
       </div>
         {% endfor %}
 
