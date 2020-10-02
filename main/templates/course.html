@@ -49,7 +49,7 @@
 
                 {% if current_user.is_admin() %}
                 <nav class="p-2">
-                    <a class="btn btn-primary" href="{{ url_for('admin_bp.show_admin_dashboard', id=current_user.id) }}"
+                    <a class="btn btn-primary" href="{{ url_for('admin_bp.show_admin_dashboard') }}"
                        role="button">
                         <svg class="bi bi-person-fill" fill="currentColor" height="1em" viewBox="0 0 16 16" width="1em"
                              xmlns="http://www.w3.org/2000/svg">
