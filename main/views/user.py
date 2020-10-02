@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, url_for, flash, request
 from flask_login import login_required
-from main.models import Course, User
+from main.models import Course, User, Enrolment, CourseLike, CourseCompletion
 from main.views import db
 from main.models import ACCESS
 from main.decorators import requires_access_level
@@ -13,9 +13,12 @@ user_bp = Blueprint('user_bp', __name__)
 @requires_access_level(ACCESS['user'])
 def show_user_dashboard(uid):
     user = User.query.filter_by(id=uid).one()
-    current_courses = user.enrolled
-    liked_courses = user.liked
-    completed_courses = user.completions
+    current_courses = Course.query.join(Enrolment, Course.id == Enrolment.course_id).join(
+        User, Enrolment.user_id == User.id).filter(User.id == uid).all()
+    liked_courses = Course.query.join(CourseLike, Course.id == CourseLike.course_id).join(
+        User, CourseLike.user_id == User.id).filter(User.id == uid).all()
+    completed_courses = Course.query.join(CourseCompletion, Course.id == CourseCompletion.course_id).join(
+        User, CourseCompletion.user_id == User.id).filter(User.id == uid).all()
     return render_template('login.html', current_courses=current_courses,
                            liked_courses=liked_courses, completed_courses=completed_courses)
 
@@ -73,7 +76,7 @@ def enrol_action(uid, cid, action):
 def complete_action(uid, cid, action):
     course = Course.query.filter_by(id=cid).first_or_404()
     user = User.query.filter_by(id=uid).first()
-    if action == 'like':
+    if action == 'complete':
         user.mark_course_completed(course)
         db.session.commit()
     return redirect(request.referrer)

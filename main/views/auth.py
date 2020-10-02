@@ -20,6 +20,8 @@ def register():
     """
     if current_user.is_authenticated:
         flash('You have already registered.')
+        if current_user.is_admin():
+            return redirect(url_for('admin_bp.show_admin_dashboard'))
         return redirect(url_for('user_bp.show_user_dashboard', uid=current_user.id))
     form = SignupForm()
     if form.validate_on_submit():
@@ -64,13 +66,12 @@ def login():
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user, remember=form.remember_me.data)
             session['email'] = form.email.data
-            next_page = request.args.get('next')
             if user.access == 1:
-                return redirect(next_page or url_for('user_bp.show_user_dashboard', uid=user.id))
+                return redirect(url_for('user_bp.show_user_dashboard', uid=user.id))
             else:
-                return redirect(next_page or url_for('admin_bp.show_admin_dashboard'))
+                return redirect(url_for('admin_bp.show_admin_dashboard'))
         flash('Invalid email/password combination')
-        return redirect(url_for('.login'))
+        return redirect(url_for('auth_bp.login'))
     return render_template('sign_in.html', form=form)
 
 
@@ -84,9 +85,9 @@ def load_user(user_id):
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    """Redirect unauthorized users to homepage."""
+    """Redirect unauthorized users."""
     flash('Please login to view this page.')
-    return redirect(url_for('.login'))
+    return redirect(url_for('auth_bp.login'))
 
 
 @auth_bp.route("/logout")
@@ -94,7 +95,7 @@ def unauthorized():
 def logout():
     """User log-out logic."""
     logout_user()
-    return redirect(url_for('.login'))
+    return redirect(url_for('auth_bp.login'))
 
 
 def send_reset_email(user):
@@ -119,7 +120,7 @@ def reset_request():
         user = User.query.filter_by(email=form.email.data).first()
         send_reset_email(user)
         flash('An email has been sent with instructions to reset your password.')
-        return redirect(url_for('.login'))
+        return redirect(url_for('auth_bp.login'))
     return render_template('reset_request.html', title='Reset Password', form=form)
 
 
@@ -138,6 +139,6 @@ def reset_token(token):
         user.password_hash = hashed_password
         db.session.commit()
         flash('Your password has been updated! You are now able to log in', 'success')
-        return redirect(url_for('.login'))
+        return redirect(url_for('auth_bp.login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
 

@@ -1,5 +1,5 @@
 from flask import Blueprint, redirect, render_template, url_for
-from main.models import Course, CourseLike, Module
+from main.models import Course, Module, Book
 from sqlalchemy import func
 from flask_login import current_user
 
@@ -28,14 +28,12 @@ def browse_courses():
 
 @public_bp.route('/courses/<int:cid>', methods=['GET', 'POST'])
 def show_course(cid):
-    course = Course.query.filter_by(id=cid).first()
+    course = Course.query.filter_by(id=cid).one()
     modules = Module.query.join(Course, Module.course_id == Course.id).filter(Module.course_id == cid).all()
-    books = course.books
-    similar_courses = Course.query.filter_by(category=course.category).limit(2).all()
+    books = Book.query.join(Course, Book.course_id == Course.id).filter(Book.course_id == cid).all()
     return render_template("course.html", course=course,
                            modules=modules,
-                           books=books,
-                           similar_courses=similar_courses)
+                           books=books)
 
 
 @public_bp.route('/about', methods=['GET'])

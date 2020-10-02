@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField,
+                     TextAreaField,
                      BooleanField,
                      SubmitField,
                      SelectField,
@@ -74,21 +75,21 @@ class ResetPasswordForm(FlaskForm):
 
 
 class CourseForm(FlaskForm):
-    title = StringField('Course Title', validators=[DataRequired()])
+    title = TextAreaField('Course Name', render_kw={'rows': 3}, validators=[DataRequired()])
     choices = ['STEM', 'Arts & Humanities', 'Culture & Society', 'Politics']
-    category = SelectField('Category', choices=choices, validators=[DataRequired()])
-    summary = StringField('Summary', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    category = SelectField('Course Category', choices=choices, validators=[DataRequired()])
+    summary = TextAreaField('Course Summary', render_kw={'rows': 3}, validators=[DataRequired()])
+    submit = SubmitField('Save')
 
 
 class ModuleForm(FlaskForm):
-    name = StringField('Module Name', validators=[DataRequired()])
-    content = StringField('Module Content', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    name = TextAreaField('Module Name', render_kw={'rows': 3}, validators=[DataRequired()])
+    content = TextAreaField('Module Content', render_kw={'rows': 3}, validators=[DataRequired()])
+    submit = SubmitField('Save')
 
 
 class BookForm(FlaskForm):
-    book_title = StringField('Book Title', validators=[DataRequired(message='Please enter a book title.')])
+    book_title = TextAreaField('Book Title', render_kw={'rows': 3}, validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 

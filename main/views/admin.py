@@ -1,10 +1,11 @@
-from flask import Blueprint, redirect, render_template, url_for, g, flash
+from flask import Blueprint, redirect, render_template, url_for, request, flash
 from main.models import Course, Module, Book
 from sqlalchemy import desc
 from main.views.forms import CourseForm, ModuleForm, BookForm
 from main.views import db
 from main.models import ACCESS
 from main.decorators import requires_access_level
+from flask_login import login_required
 import requests
 import json
 import os
@@ -13,6 +14,7 @@ admin_bp = Blueprint('admin_bp', __name__, url_prefix='/admin')
 
 
 @admin_bp.route('/courses', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def create_course():
     form = CourseForm()
@@ -22,11 +24,12 @@ def create_course():
                         summary=form.summary.data)
         db.session.add(course)
         db.session.commit()
-        return redirect(url_for('.show_admin_course'))
-    return render_template('submit_course_details.html')
+        return redirect(url_for('.create_module', course_id=course.id))
+    return render_template('course_form.html', form=form)
 
 
 @admin_bp.route('/courses/<int:course_id>/modules', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def create_module(course_id):
     form = ModuleForm()
@@ -44,18 +47,20 @@ def create_module(course_id):
 
         db.session.add(module)
         db.session.commit()
-        return redirect(url_for('.show_admin_course'))
-    return render_template('submit_modules.html')
+        return redirect(url_for('.create_book', course_id=course_id))
+    return render_template('module_form.html', form=form)
 
 
 @admin_bp.route('/courses/<int:course_id>/books', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def create_book(course_id):
     form = BookForm()
-    api_key = os.environ['API_KEY']
     if form.validate_on_submit():
-        search_url = "https://www.googleapis.com/books/v1/volumes?q={}&key={}".format(form.title.data, api_key)
-        response = requests.get(search_url)
+        title = form.book_title.data
+        #query = title.replace(" ", "%20")
+        params = {'q': title, 'key': os.environ['API_KEY']}
+        response = requests.get('https://www.googleapis.com/books/v1/volumes', params=params)
         if response.status_code == 200:
             api_response = json.loads(response.text)
             first_book = api_response["items"][0]
@@ -74,14 +79,14 @@ def create_book(course_id):
                 db.session.add(book)
                 db.session.commit()
                 flash('Your book has been added to the course.')
-                return redirect(url_for('.show_admin_course'))
-        else:
-            flash('Your book has not been found.')
+                return redirect(url_for('.show_admin_dashboard'))
+        flash('Your book has not been found.')
+        return redirect(url_for('.show_admin_dashboard'))
 
-    return render_template('submit_books.html')
+    return render_template('book_form.html', form=form)
 
 
-@admin_bp.route('/courses/<int:course_id>', methods=['GET', 'POST'])
+'''@admin_bp.route('/courses/<int:course_id>', methods=['GET', 'POST'])
 @requires_access_level(ACCESS['admin'])
 def show_admin_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
@@ -90,22 +95,46 @@ def show_admin_course(course_id):
         return redirect(url_for('.show_admin_dashboard'))
     modules = Module.query.filter(course_id == course_id).all()
     books = course.books
-    return render_template('show_admin_course.html', course=course, modules=modules, books=books)
+    return render_template('course.html', course=course, modules=modules, books=books)'''
 
 
 @admin_bp.route('/', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def show_admin_dashboard():
     courses = Course.query.all()
     return render_template('admin_login.html', courses=courses)
 
 
-@admin_bp.route('/courses/<int:id>/delete', methods=['GET', 'POST'])
+@admin_bp.route('/courses/<int:course_id>/delete', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def delete_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
     db.session.delete(course)
     db.session.commit()
     return redirect(url_for('.show_admin_dashboard'))
+
+
+@admin_bp.route('/courses/<int:course_id>/update', methods=['GET', 'POST'])
+@login_required
+@requires_access_level(ACCESS['admin'])
+def update_course(course_id):
+    course = Course.query.filter_by(id=course_id).first()
+    form = CourseForm()
+    if form.validate_on_submit():
+        course.title = form.title.data
+        course.summary = form.summary.data
+        course.category = form.category.data
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('.show_admin_dashboard'))
+    elif request.method == 'GET':
+        form.title.data = course.title
+        form.summary.data = course.summary
+        form.category.data = course.category
+    return render_template('course_form.html', form=form)
+
+
 
 
