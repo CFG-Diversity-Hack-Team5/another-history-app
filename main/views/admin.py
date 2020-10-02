@@ -5,6 +5,7 @@ from main.views.forms import CourseForm, ModuleForm, BookForm
 from main.views import db
 from main.models import ACCESS
 from main.decorators import requires_access_level
+from flask_login import login_required
 import requests
 import json
 import os
@@ -13,6 +14,7 @@ admin_bp = Blueprint('admin_bp', __name__, url_prefix='/admin')
 
 
 @admin_bp.route('/courses', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def create_course():
     form = CourseForm()
@@ -27,6 +29,7 @@ def create_course():
 
 
 @admin_bp.route('/courses/<int:course_id>/modules', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def create_module(course_id):
     form = ModuleForm()
@@ -49,6 +52,7 @@ def create_module(course_id):
 
 
 @admin_bp.route('/courses/<int:course_id>/books', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def create_book(course_id):
     form = BookForm()
@@ -95,6 +99,7 @@ def show_admin_course(course_id):
 
 
 @admin_bp.route('/', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def show_admin_dashboard():
     courses = Course.query.all()
@@ -102,6 +107,7 @@ def show_admin_dashboard():
 
 
 @admin_bp.route('/courses/<int:course_id>/delete', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def delete_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
@@ -111,6 +117,7 @@ def delete_course(course_id):
 
 
 @admin_bp.route('/courses/<int:course_id>/update', methods=['GET', 'POST'])
+@login_required
 @requires_access_level(ACCESS['admin'])
 def update_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
