@@ -37,15 +37,46 @@
 
 <div class="container">
     <div class="header clearfix">
-        <nav class="navbar navbar-light">
-            <a class="navbar-brand" href="{{ url_for('public_bp.index') }}"><b>Another History</b></a>
-            <form class="form-inline">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="collapse navbar-collapse" id="publicIndex">
+                <nav class="mr-auto p-2">
+                    <a class="navbar-brand" href="{{ url_for('public_bp.index') }}"><b>Another History</b></a>
+                </nav>
                 {% if current_user.is_authenticated %}
-                <div class="signin_button">
-                    <a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
-                </div>
+                <nav class="p-2">
+                    <a class="navbar-brand" href="{{ url_for('auth_bp.logout') }}">Log Out</a>
+                </nav>
+
+                {% if current_user.is_admin() %}
+                <nav class="p-2">
+                    <a class="btn btn-primary" href="{{ url_for('admin_bp.show_admin_dashboard') }}"
+                       role="button">
+                        <svg class="bi bi-person-fill" fill="currentColor" height="1em" viewBox="0 0 16 16" width="1em"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"
+                                  fill-rule="evenodd"/>
+                        </svg>
+                    </a>
+                </nav>
+                {% else %}
+                <nav class="p-2">
+                    <a class="btn btn-primary" href="{{ url_for('user_bp.show_user_dashboard', uid=current_user.id) }}"
+                       role="button">
+                        <svg class="bi bi-person-fill" fill="currentColor" height="1em" viewBox="0 0 16 16" width="1em"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"
+                                  fill-rule="evenodd"/>
+                        </svg>
+                    </a>
+                </nav>
                 {% endif %}
-            </form>
+
+                {% else %}
+                <nav class="p-2">
+                    <a class="navbar-brand" href="{{ url_for('auth_bp.login') }}">Sign in</a>
+                </nav>
+                {% endif %}
+            </div>
         </nav>
     </div>
     <div class="container">

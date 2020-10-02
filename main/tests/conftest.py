@@ -8,12 +8,12 @@ import psycopg2
 import pytest
 from main.views import create_app
 
-TEST_DATABASE_URL = 'postgresql+psycopg2://postgres:avalanche8282@localhost:5432/another_history_testdb'
+TEST_DATABASE_URL = 'postgresql:///test_another_history'
 
 # Retrieve a database connection string from the shell environment
 try:
  ##   DB_CONN = os.environ['TEST_DATABASE_URL']
-    DB_CONN = 'postgresql+psycopg2:///another_history_testdb'
+    DB_CONN = TEST_DATABASE_URL
 
 except KeyError:
     raise KeyError('TEST_DATABASE_URL not found. You must export a database ' +
