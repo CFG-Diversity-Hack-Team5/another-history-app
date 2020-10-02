@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
+    <meta content="" name="description">
+    <meta content="" name="author">
+    <link href="../../favicon.ico" rel="icon">
 
     <title>Another History</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <!--<link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">-->
@@ -21,231 +22,208 @@
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 
     <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Gudea:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gudea:ital,wght@0,400;0,700;1,400&display=swap"
+          rel="stylesheet">
 
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-  </head>
+</head>
 
-  <body>
+<body>
 
+<div class="container">
+    <div class="header clearfix">
+        <nav class="navbar navbar-light">
+            <a class="navbar-brand" href="{{ url_for('public_bp.index') }}"><b>Another History</b></a>
+
+            <form class="form-inline">
+                <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search all courses" aria-label="Search">
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><span class="material-icons">earch</span></button> -->
+                {% if current_user.is_authenticated %}
+                <div class="signin_button">
+                    <a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
+                </div>
+                {% else %}
+                <div class="signin_button">
+                    <a href="{{ url_for('auth_bp.login') }}">Sign in</a>
+                </div>
+                {% endif %}
+
+                {% if current_user.is_authenticated %}
+                <div class="signin_button">
+                    {% if current_user.is_admin() %}
+                    <a class="btn btn-primary" href="{{ url_for('admin_bp.show_admin_dashboard', id=current_user.id) }}" role="button">
+                        <svg class="bi bi-person-fill" fill="currentColor" height="1em" viewBox="0 0 16 16" width="1em"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"
+                                  fill-rule="evenodd"/>
+                        </svg>
+                    </a>
+                    {% else %}
+                    <a class="btn btn-primary" href="{{ url_for('user_bp.show_user_dashboard', uid=current_user.id) }}"
+                       role="button">
+                        <svg class="bi bi-person-fill" fill="currentColor" height="1em" viewBox="0 0 16 16" width="1em"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"
+                                  fill-rule="evenodd"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </form>
+        </nav>
+    </div>
     <div class="container">
-      <div class="header clearfix">
-    <nav class="navbar navbar-light">
-<a class="navbar-brand" href="{{ url_for('public_bp.index') }}"><b>Another History</b></a>
-<form class="form-inline">
-  <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search all courses" aria-label="Search">
-  <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><span class="material-icons">earch</span></button> -->
-  <form class="form-inline">
-      {% if current_user.is_authenticated %}
-       <div class ="signin_button">
-         <a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
-      </div>
-        {% else %}
-         <div class ="signin_button">
-         <a href="{{ url_for('auth_bp.login') }}">Sign in</a>
-      </div>
-        {% endif %}
-    </div> 
-  </form>
-</form>
-</nav>
-</div>
-        <div class="container">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert alert-info" role="alert">{{ message }}</div>
+        {% endfor %}
         {% endif %}
         {% endwith %}
-         </div>
+    </div>
 
-      <div class="jumbotron">
+    <div class="jumbotron">
         <h1>{{ course.title }}</h1>
-      </div>
+    </div>
 
 
-      <div class="row marketing">
+    <div class="row marketing">
         <div class="card">
-          <div class="card-header">
-            {{ course.category }}
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Summary of course</h5>
-            <p class="card-text">
-              {{ course.summary }}
-            </p><br>
-            <p class>
-                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-alarm-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M6 .5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1H9v1.07a7.001 7.001 0 0 1 3.274 12.474l.601.602a.5.5 0 0 1-.707.708l-.746-.746A6.97 6.97 0 0 1 8 16a6.97 6.97 0 0 1-3.422-.892l-.746.746a.5.5 0 0 1-.707-.708l.602-.602A7.001 7.001 0 0 1 7 2.07V1h-.5A.5.5 0 0 1 6 .5zM.86 5.387A2.5 2.5 0 1 1 4.387 1.86 8.035 8.035 0 0 0 .86 5.387zM11.613 1.86a2.5 2.5 0 1 1 3.527 3.527 8.035 8.035 0 0 0-3.527-3.527zM8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9V5.5z"/>
-              </svg>
-              We suggest 6 hours study time a week for this course
-            </p><br>
-            {% if current_user.is_authenticated %}
-                 {% if not current_user.has_enrolled(course) %}
-              <a href="{{ url_for('user_bp.enrol_action', uid=current_user.id, cid=course.id, action='enrol') }}" class="btn btn-success">Enroll</a>
-                 {% else %}
-              <p>You're enrolled!</p>
-                 {% endif %}
-              {% endif %}
-            
-          </div>
-           <div class="card-footer">
-             {% if current_user.is_authenticated %}
-                {% if current_user.has_liked_course(course) %}
-               <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bookmark-heart" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
-                  <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
-            </svg>
-                <a href="{{ url_for('user_bp.like_action', uid=current_user.id, cid=course.id, action='unlike') }}">Unlike this course</a>
+            <div class="card-header">
+                {{ course.category }}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Summary of course</h5>
+                <p class="card-text">
+                    {{ course.summary }}
+                </p><br>
+                <p class>
+                    <svg class="bi bi-alarm-fill" fill="currentColor" height="1em" viewBox="0 0 16 16" width="1em"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 .5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1H9v1.07a7.001 7.001 0 0 1 3.274 12.474l.601.602a.5.5 0 0 1-.707.708l-.746-.746A6.97 6.97 0 0 1 8 16a6.97 6.97 0 0 1-3.422-.892l-.746.746a.5.5 0 0 1-.707-.708l.602-.602A7.001 7.001 0 0 1 7 2.07V1h-.5A.5.5 0 0 1 6 .5zM.86 5.387A2.5 2.5 0 1 1 4.387 1.86 8.035 8.035 0 0 0 .86 5.387zM11.613 1.86a2.5 2.5 0 1 1 3.527 3.527 8.035 8.035 0 0 0-3.527-3.527zM8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9V5.5z"
+                              fill-rule="evenodd"/>
+                    </svg>
+                    We suggest 6 hours study time a week for this course
+                </p>
+                <br>
+                {% if current_user.is_authenticated %}
+                {% if not current_user.has_enrolled(course) %}
+                <a class="btn btn-success"
+                   href="{{ url_for('user_bp.enrol_action', uid=current_user.id, cid=course.id, action='enrol') }}">Enroll</a>
                 {% else %}
-             <a href="{{ url_for('user_bp.like_action', uid=current_user.id, cid=course.id, action='like') }}">Like this course to save it for later</a>
+                <p>You're enrolled!</p>
                 {% endif %}
-               {% endif %}
-          </div>
-        </div>
-      </div>
+                {% endif %}
 
-
-     <!-- <div class="container_join">
-        <blockquote class="blockquote text-left">
-          <p class="mb-0">Interesting quote from someone featured on the course</p>
-          <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
-        </blockquote>
-      </div>-->
-
-
-      <div class="row marketing">
-      <div class="accordion" id="accordionExample">
-        <div class="card">
-            {% for module in modules %}
-          <div class="card-header" id="headingOne">
-            <h5 class="mb-0">
-              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                Week {{ module.week_number}} {{ module.name }} +
-              </button>
-            </h5>
-          </div>
-      
-          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-            <div class="card-body">
-              {{ module.content }}
-              <!--<br><br><a href="signin.html">Start module</a><br><br>
-              <button type="button" class="btn btn-success">Module completed</button>-->
             </div>
-          </div>
-            {% endfor %}
+            <div class="card-footer">
+                {% if current_user.is_authenticated %}
+                {% if current_user.has_liked_course(course) %}
+                <svg class="bi bi-bookmark-heart" fill="currentColor" height="1em" viewBox="0 0 16 16" width="1em"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"
+                          fill-rule="evenodd"/>
+                    <path d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"
+                          fill-rule="evenodd"/>
+                </svg>
+                <a href="{{ url_for('user_bp.like_action', uid=current_user.id, cid=course.id, action='unlike') }}">Unlike
+                    this course</a>
+                {% else %}
+                <a href="{{ url_for('user_bp.like_action', uid=current_user.id, cid=course.id, action='like') }}">Like
+                    this course to save it for later</a>
+                {% endif %}
+                {% endif %}
+            </div>
         </div>
+    </div>
 
-       <!-- <div class="card">
-          <div class="card-header" id="headingTwo">
-            <h5 class="mb-0">
-              <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                Week 2 Module Name +
-              </button>
-            </h5>
-          </div>
-          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-            <div class="card-body">
-              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, 
-              non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua 
-              put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore 
-              wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, 
-              raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-              <br><br><a href="signin.html">Start module</a><br><br>
-              <button type="button" class="btn btn-success">Module completed</button>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header" id="headingThree">
-            <h5 class="mb-0">
-              <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                Week 3 Module Name +
-              </button>
-            </h5>
-          </div>
-          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-            <div class="card-body">
-              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat 
-              skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid 
-              single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente 
-              ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you 
-              probably haven't heard of them accusamus labore sustainable VHS.
-              <br><br><a href="signin.html">Start module</a><br><br>
-              <button type="button" class="btn btn-success">Module completed</button>
-            </div>
-          </div>
-        </div>
-          <div class="card">
-          <div class="card-header" id="headingFour">
-            <h5 class="mb-0">
-              <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseThree">
-                Week 4 Module Name +
-              </button>
-            </h5>
-          </div>
-          <div id="collapseFour" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-            <div class="card-body">
-              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat 
-              skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin 
-              coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. 
-              Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard 
-              of them accusamus labore sustainable VHS.
-              <br><br><a href="signin.html">Start module</a><br><br>
-              <button type="button" class="btn btn-success">Module completed</button>
-            </div>
-          </div>
-        </div>-->
 
-      </div>
+    <!-- <div class="container_join">
+       <blockquote class="blockquote text-left">
+         <p class="mb-0">Interesting quote from someone featured on the course</p>
+         <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
+       </blockquote>
+     </div>-->
+
+
+    <div class="row marketing">
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                {% for module in modules %}
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-link" data-target="#collapseOne"
+                                data-toggle="collapse" type="button">
+                            Week {{ module.week_number}} {{ module.name }} +
+                        </button>
+                    </h5>
+                </div>
+
+                <div aria-labelledby="headingOne" class="collapse show" data-parent="#accordionExample"
+                     id="collapseOne">
+                    <div class="card-body">
+                        {{ module.content }}
+                        <!--<br><br><a href="signin.html">Start module</a><br><br>
+                        <button type="button" class="btn btn-success">Module completed</button>-->
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
     <div class="container_button">
-       {% if current_user.is_authenticated %}
-         {% if not current_user.has_marked_completed(course) %}
-      <a href="{{ url_for('user_bp.complete_action', uid=current_user.id, cid=course.id, action='complete') }}">Mark course completed</a>
-         {% else %}
-      <a type="button" class="btn btn-lg btn-success">Course completed</a>
-         {% endif %}
+        {% if current_user.is_authenticated %}
+        {% if not current_user.has_marked_completed(course) %}
+        <a href="{{ url_for('user_bp.complete_action', uid=current_user.id, cid=course.id, action='complete') }}">Mark
+            course completed</a>
+        {% else %}
+        <a class="btn btn-lg btn-success" type="button">Course completed</a>
+        {% endif %}
         {% endif %}
     </div>
 
     <div class="container heading">
-      <h2>Suggested reading</h2>
+        <h2>Suggested reading</h2>
     </div>
 
     <div class="row marketing">
         {% for book in books %}
-      <div class="col-lg-6">
-        <h4><a href="{{ book.preview_link }}">{{ book.book_title }}</a></h4>
-          <img src="{{ book.thumbnail }}" alt="" class="thumbnail" />
-      </div>
+        <div class="col-lg-6">
+            <h4><a href="{{ book.preview_link }}">{{ book.book_title }}</a></h4>
+            <img alt="" class="thumbnail" src="{{ book.thumbnail }}"/>
+        </div>
         {% endfor %}
 
-     <!-- <div class="col-lg-6">
-        <h4><a href="">Course Name</a></h4>
-        <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
-      </div>-->
+        <!-- <div class="col-lg-6">
+           <h4><a href="">Course Name</a></h4>
+           <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+         </div>-->
     </div>
 
-      <footer class="footer">
+    <footer class="footer">
         <p>Another History was made for Code First Girls Diversity hackathon</p>
-      </footer>
+    </footer>
 
-    </div> <!-- /container -->
+</div> <!-- /container -->
 
 
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <!-- JS, Popper.js, and jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
-  </body>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<!-- JS, Popper.js, and jQuery -->
+<script crossorigin="anonymous"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 </html>

@@ -5,6 +5,10 @@ body {
   padding-bottom: 20px;
 }
 
+.signoutin_button {
+ padding-right: 1em;
+}
+
 hr {
   padding-bottom: 2em;
   color: white;

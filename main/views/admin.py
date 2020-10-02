@@ -94,9 +94,9 @@ def show_admin_course(course_id):
     return render_template('course.html', course=course, modules=modules, books=books)'''
 
 
-@admin_bp.route('/', methods=['GET', 'POST'])
+@admin_bp.route('/<int:id>', methods=['GET', 'POST'])
 @requires_access_level(ACCESS['admin'])
-def show_admin_dashboard():
+def show_admin_dashboard(id):
     courses = Course.query.all()
     return render_template('admin_login.html', courses=courses)
 

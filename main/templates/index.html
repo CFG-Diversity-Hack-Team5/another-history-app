@@ -80,14 +80,12 @@
       
 
       <div class="row marketing">
+          {% for course in courses %}
         <div class="col-lg-6">
-            {% for course in courses %}
           <h4><a href="{{ url_for('public_bp.show_course', cid=course.id) }}">{{ course.title }}</a></h4>
           <p>{{ course.summary }}</p>
-            {% endfor %}
-
         </div>
-
+          {% endfor %}
         <!--<div class="col-lg-6">
           <h4><a href="">Course Name</a></h4>
           <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
