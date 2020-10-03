@@ -2,7 +2,7 @@ from flask import Blueprint, redirect, render_template, flash, session, url_for
 from main.models import User
 from main.views.forms import SignupForm, LoginForm
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, login_required, logout_user
 from main.views import db, login_manager
 
 
@@ -89,3 +89,9 @@ def unauthorized():
     flash('Please login to view this page.')
     return redirect(url_for('auth_bp.login'))
 
+@auth_bp.route("/logout")
+@login_required
+def logout():
+    """User log-out logic."""
+    logout_user()
+    return redirect(url_for('auth_bp.login'))
