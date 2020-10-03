@@ -72,9 +72,6 @@
           {{ render_field(form.remember_me, class='form-check-input') }}
         </div>
         <div class = "sign_in_questions">
-          <a href="{{ url_for('auth_bp.reset_request') }}">Forgot password?</a><br><br>
-        </div>
-        <div class = "sign_in_questions">
           Not signed up yet? <a href="{{ url_for('auth_bp.register') }}">Register here</a><br><br>
         </div>
         {{ render_field(form.submit) }}
