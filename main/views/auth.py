@@ -35,7 +35,7 @@ def register():
                 user.access = 2
             db.session.add(user)
             db.session.commit()  # Create new user
-            login_user(user, remember=form.remember_me.data)  # Log in as newly created user
+            login_user(user)  # Log in as newly created user
             if user.is_admin():
                 return redirect(url_for('admin_bp.show_admin_dashboard'))
             else:
@@ -64,7 +64,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
-            login_user(user, remember=form.remember_me.data)
+            login_user(user)
             session['email'] = form.email.data
             if user.access == 1:
                 return redirect(url_for('user_bp.show_user_dashboard', uid=user.id))
