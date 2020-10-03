@@ -40,7 +40,8 @@ def register():
                 return redirect(url_for('admin_bp.show_admin_dashboard'))
             else:
                 return redirect(url_for('public_bp.index'))
-        flash('A user already exists with that email address.')
+        else:
+            flash('A user already exists with that email address.')
     return render_template('register.html', form=form)
 
 

@@ -30,3 +30,11 @@ class DevelopmentConfig(Config):
     FLASK_ENV = 'development'
 
 
+class TestingConfig(Config):
+    DEBUG = True
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'postgresql:///test_another_history'
+    WTF_CSRF_ENABLED = False
+
+
+
