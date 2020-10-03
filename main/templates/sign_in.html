@@ -61,7 +61,7 @@
 
       {% from 'bootstrap/form.html' import render_field %}
       <form method="post">
-        <!--{{ form.csrf_token }}-->
+        {{ form.csrf_token }}
         <h2>Sign in</h2><br>
         <div class="form-group" style="width: 50%">
           {{ render_field(form.email, class='form-control', placeholder='Enter email') }}

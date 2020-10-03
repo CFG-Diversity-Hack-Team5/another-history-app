@@ -96,16 +96,14 @@
 
     <div class="container_courses">
         <form method="post">
-<!--
             {{ form.csrf_token }}
--->
             <div class="form-group">
                 {{ render_field(form.book_title, class='form-control', placeholder='Type the title of the book here') }}
             </div>
             {{ render_field(form.submit) }}
         </form>
     </div>
-    
+
 
 
     <footer class="footer">
