@@ -58,7 +58,6 @@ def create_book(course_id):
     form = BookForm()
     if form.validate_on_submit():
         title = form.book_title.data
-        #query = title.replace(" ", "%20")
         params = {'q': title, 'key': os.environ['API_KEY']}
         response = requests.get('https://www.googleapis.com/books/v1/volumes', params=params)
         if response.status_code == 200:
@@ -84,18 +83,6 @@ def create_book(course_id):
         return redirect(url_for('.show_admin_dashboard'))
 
     return render_template('book_form.html', form=form)
-
-
-'''@admin_bp.route('/courses/<int:course_id>', methods=['GET', 'POST'])
-@requires_access_level(ACCESS['admin'])
-def show_admin_course(course_id):
-    course = Course.query.filter_by(id=course_id).first()
-    if course is None:
-        flash('Course has not been found.')
-        return redirect(url_for('.show_admin_dashboard'))
-    modules = Module.query.filter(course_id == course_id).all()
-    books = course.books
-    return render_template('course.html', course=course, modules=modules, books=books)'''
 
 
 @admin_bp.route('/', methods=['GET', 'POST'])

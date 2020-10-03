@@ -16,15 +16,19 @@
           integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <!-- <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">-->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Gudea:ital,wght@0,400;0,700;1,400&display=swap"
           rel="stylesheet">
 
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -79,67 +83,23 @@
             </div>
         </nav>
     </div>
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-info" role="alert">{{ message }}</div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-    </div>
 
     <div class="jumbotron">
-        <h1>Admin dashboard</h1>
+        <h1>A brighter<br>future is built on<br>
+            <b>Another History</b></h1>
     </div>
-
-
-    <div class="container_heading">
-        <h2>Create new courses</h2>
-    </div>
-
-    <div class="container_courses">
-        <div class="card">
-            <h5 class="card-header">Create course</h5>
-            <div class="card-body">
-                <p class="card-text">
-                    Step 1. Create course name, category and summary<br>
-                    Step 2. Create module name and content<br>
-                    Step 3. Add books to the course recommended reading list
-                <p class="card-text"></p>
-                </p>
-            </div>
-            <div class="card-footer">
-                <a href="{{ url_for('admin_bp.create_course')}}">Create course content</a>
-            </div>
-        </div>
-    </div>
-
 
     <div class="container heading">
-        <h3>Edit existing courses</h3>
+        <h4>Another History is an educational project that seeks to put on the historical map the
+            diversity of important contributors to disciplines such as Arts & Humanities, STEM,
+            Politics, Culture & Society. By doing so, the project aims to create an inclusive
+            educational experience among learners of any age, gender, race or religion and
+            instil in them a can-do attitude and a sense of possibility. For both students and
+            adult learners alike, the courses have been designed to resurface little known stories
+            of important figures in the highlighted fields in order to complement the mainstream
+            History curriculum.</h4>
     </div>
 
-    <div class="container_courses">
-        <div class="card">
-            {% for course in courses %}
-            <h5 class="card-header">{{ course.title }}</h5>
-            <div class="card-body">
-                <p class="card-text">{{ course.summary }}</p>
-            </div>
-            <div class="card-footer">
-                <a class="btn btn-success" href="{{ url_for('admin_bp.update_course', course_id=course.id) }}"
-                   role="button">Edit course</a>
-                <a class="btn btn-danger" href="{{ url_for('admin_bp.delete_course', course_id=course.id) }}"
-                   role="button">Delete</a>
-            </div>
-            <div class="card-footer">
-                <a class="btn btn-primary" href="{{ url_for('admin_bp.create_module', course_id=course.id) }}" role="button">Add module</a>
-                <a class="btn btn-primary" href="{{ url_for('admin_bp.create_book', course_id=course.id) }}" role="button">Add book</a>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
 
     <footer class="footer">
         <p>Another History was made for Code First Girls Diversity hackathon</p>
