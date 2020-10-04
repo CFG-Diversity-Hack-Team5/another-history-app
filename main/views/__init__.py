@@ -27,7 +27,7 @@ def create_app():
     from main import models
 
     with app.app_context():
-        db.create_all(bind=None, tables=None, checkfirst=True)
+        db.create_all()
 
     from main.views.auth import auth_bp
     app.register_blueprint(auth_bp)
