@@ -2,13 +2,16 @@ import os
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import MetaData, create_engine
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 
 
 csrf = CSRFProtect()
-db = SQLAlchemy()
+engine = create_engine(os.environ['DATABASE_URL'])
+metadata = MetaData()
+db = SQLAlchemy(metadata=metadata)
 migrate = Migrate()
 login_manager = LoginManager()
 bootstrap = Bootstrap()
@@ -27,7 +30,7 @@ def create_app():
     from main import models
 
     with app.app_context():
-        db.create_all()
+        db.metadata.create_all(engine)
 
     from main.views.auth import auth_bp
     app.register_blueprint(auth_bp)
