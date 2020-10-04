@@ -37,11 +37,12 @@ def register():
                 user.access = 2
             db.session.add(user)
             db.session.commit()  # Create new user
-            login_user(user)  # Log in as newly created user
-            if user.is_admin():
-                return redirect(url_for('admin_bp.show_admin_dashboard'))
-            else:
-                return redirect(url_for('public_bp.index'))
+            return redirect((url_for('public_bp.index')))
+            # login_user(user)  # Log in as newly created user
+            # if user.is_admin():
+            #    return redirect(url_for('admin_bp.show_admin_dashboard'))
+            # else:
+                # return redirect(url_for('public_bp.index'))
         flash('A user already exists with that email address.')
     return render_template('register.html', form=form)
 
