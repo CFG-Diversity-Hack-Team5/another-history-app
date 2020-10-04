@@ -24,7 +24,9 @@ def register():
             return redirect(url_for('admin_bp.show_admin_dashboard'))
         return redirect(url_for('user_bp.show_user_dashboard', uid=current_user.id))
     form = SignupForm()
+    print(form.csrf_token)
     if form.validate_on_submit():
+        print(form.csrf_token)
         existing_user = User.query.filter_by(email=form.email.data).first()
         if existing_user is None:
             user = User(
