@@ -15,7 +15,6 @@ class ProductionConfig(Config):
     DEBUG = False
     SECRET_KEY = os.environ['SECRET_KEY']
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
-    WTF_CSRF_TIME_LIMIT = None
 
 
 class DevelopmentConfig(Config):
